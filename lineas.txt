@@ -1,0 +1,7 @@
+línea pa compilar:
+
+gcc *.c -o jueguito -std=c99 -Wall -Wconversion -Werror -Wtype-limits -Wextra -lm
+
+y pa ejecutar:
+
+./jueguito
