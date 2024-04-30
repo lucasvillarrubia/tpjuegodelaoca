@@ -49,23 +49,26 @@ bool coordenadas_iguales (coordenada_t a, coordenada_t b);
 //------------------------------------------------------------------------------------------------------
 
 
-
+// se usa el esta dentro del tablero y si es zorro deberia tmb pedirse zorro_no_puede_moverse
 bool es_movimiento_valido (char movimiento, bool es_turno_del_zorro);
 
 
+//TODO: no estan implementados, rompe todo
+//busca si se pisa una oca con la coordenada pasada
 int buscar_oca (oca_t ocas [MAX_OCAS], int tope, coordenada_t posicion);
 
-
+//TODO: no estan implementados, rompe todo
 int buscar_oca_por_letra (oca_t* ocas , int tope, char letra_oca);
 
-
+//TODO: no estan implementados, creo que es lo mismo que bsucar_oca_por_letra
+//devuelve oca al darle la letra con la cual se identifica 
 void pedir_oca (char* ref_letra_oca);
 
 
- 
+//se aparta la oca del tablero y saca del vector de ocas
 void eliminar_oca (oca_t ocas [MAX_OCAS], int* tope, coordenada_t posicion);
 
-
+//TODO; hace lo mismo que buscar oca y elimina oca?
 bool comer_oca (juego_t* juego, char movimiento, coordenada_t posicion);
 
 
@@ -91,7 +94,6 @@ bool mover_zorro (juego_t* juego, char movimiento);
 
 
 void pedir_movimiento (char* ref_movimiento, bool es_turno_del_zorro);
-
 
 void rellenar_cuadricula (juego_t juego, char tablero_vacio [MAX_FILAS][MAX_COLUMNAS]);
 
