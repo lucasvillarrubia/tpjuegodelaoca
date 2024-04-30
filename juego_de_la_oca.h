@@ -56,7 +56,7 @@ bool es_movimiento_valido (char movimiento, bool es_turno_del_zorro);
 int buscar_oca (oca_t ocas [MAX_OCAS], int tope, coordenada_t posicion);
 
 
-int buscar_oca_por_letra (oca_t ocas [MAX_OCAS], int tope, char letra_oca);
+int buscar_oca_por_letra (oca_t* ocas , int tope, char letra_oca);
 
 
 void pedir_oca (char* ref_letra_oca);
