@@ -218,7 +218,7 @@ bool mover_zorro (juego_t* juego, char movimiento) {
 			auxiliar.fila --;
 			break;
 		case ABAJO_IZQUIERDA:
-			auxiliar.col ++;
+			auxiliar.col --;
 			auxiliar.fila ++;
 			break;
 		case ABAJO_DERECHA:
@@ -375,5 +375,9 @@ void imprimir_tablero (juego_t juego) {
 	Con la letra (A)  -->  Te movés a la IZQUIERDA. \n \
 	Con la letra (D)  -->  Te movés a la DERECHA.   \n \
 	Con la letra (W)  -->  Te movés hacia ARRIBA.   \n \
-	Con la letra (S)  -->  Te movés hacia ABAJO.   \n\n\n\n");
+	Con la letra (S)  -->  Te movés hacia ABAJO.   \n \
+	Con la letra (Q)  -->  Te movés hacia ARRIBA IZQUIERDA.   \n \
+	Con la letra (E)  -->  Te movés hacia ARRIBA DERECHA.   \n \
+	Con la letra (Z)  -->  Te movés hacia ABAJO IZQUIERDA.   \n \
+	Con la letra (X)  -->  Te movés hacia ABAJO DERECHA.   \n\n\n\n");
 }
