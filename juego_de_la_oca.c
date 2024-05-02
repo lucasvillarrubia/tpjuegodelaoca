@@ -10,6 +10,9 @@
 #define CANT_OCAS 17
 #define MAX_OCAS 48
 
+#define ZORRO_COL_INICIAL 3
+#define ZORRO_FIL_INICIAL 4
+
 #define ARRIBA 'W'
 #define IZQUIERDA 'A'
 #define ABAJO 'S'
@@ -38,17 +41,14 @@ bool coordenadas_iguales (coordenada_t a, coordenada_t b) {
     return ((a.fila == b.fila) && (a.col == b.col));
 }
 
-
-int buscar_oca (oca_t ocas [MAX_OCAS], int tope, coordenada_t posicion) {
-    int indice_oca = NO_ENCONTRADX;
-    int i = 0;
-    while ((i < tope) && (indice_oca == NO_ENCONTRADX)) {
-    	if (coordenadas_iguales (ocas[i].posicion, posicion)) {
-          	indice_oca = i;
+//mal nombre , mejor nombre pisa oca
+int buscar_oca (oca_t ocas [MAX_OCAS], int tope_ocas, coordenada_t posicion) {
+	for(int i= 0; i<tope_ocas ; i++){
+		if (coordenadas_iguales (ocas[i].posicion, posicion)) {
+          	return i;
         }
-        i ++;
-    }
-    return indice_oca;
+	}
+	return NO_ENCONTRADX;
 }
 
 
@@ -63,7 +63,7 @@ void eliminar_oca (oca_t ocas [MAX_OCAS], int* tope, coordenada_t posicion) {
 	(*tope)--;
 }
 
-
+//deberian ser constantes definidaas con parametros del tablero el max alto y ancho
 bool esta_dentro_tablero (coordenada_t posicion, int max_alto, int max_ancho) {
 	int i = posicion.col;
 	int j = posicion.fila;
@@ -75,8 +75,8 @@ bool esta_dentro_tablero (coordenada_t posicion, int max_alto, int max_ancho) {
 		&& !fuera_de_juego);
 }
 
-
-int buscar_oca_por_letra (oca_t ocas [MAX_OCAS], int tope, char letra_oca) {
+/*hace lo mismo que buscar oca pero con letra por ahora todas ocas son irreconocibles*/
+/*int buscar_oca_por_letra (oca_t* ocas, int tope, char letra_oca) {
 	int indice_oca = NO_ENCONTRADX;
     int i = 0;
     while ((i < tope) && (indice_oca == NO_ENCONTRADX)) {
@@ -86,9 +86,9 @@ int buscar_oca_por_letra (oca_t ocas [MAX_OCAS], int tope, char letra_oca) {
         i ++;
     }
     return indice_oca;
-}
+}*/
 
-
+/*
 void pedir_oca (char* ref_letra_oca) {
 	printf ("\tLe toca a las ocas:\n\tIngresá la letra de la oca que querés mover (MENOS LA 'X'):  ");
 	scanf (" %c", ref_letra_oca);
@@ -96,7 +96,7 @@ void pedir_oca (char* ref_letra_oca) {
 		printf ("\n\tNo existe esa oca en este juego.\n\tIngresá una letra de oca válido (LA 'X' NO):  ");
 		scanf (" %c", ref_letra_oca);
 	}
-}
+}*/
 
 
 bool es_movimiento_valido (char movimiento, bool es_turno_del_zorro) {
@@ -135,7 +135,7 @@ bool zorro_no_puede_moverse (juego_t juego) {
 				(i == zorro.col && j == zorro.fila))) {
 				auxiliar.col = i;
 				auxiliar.fila = j;
-				if (esta_dentro_tablero(auxiliar, MAX_FILAS, MAX_COLUMNAS) || buscar_oca(juego.ocas, juego.tope_ocas, auxiliar) != NO_ENCONTRADX) {
+				if (esta_dentro_tablero(auxiliar, MAX_FILAS, MAX_COLUMNAS) /*|| buscar_oca(juego.ocas, juego.tope_ocas, auxiliar) != NO_ENCONTRADX*/) {
 					return false;
 				}
 			}
@@ -148,7 +148,7 @@ bool zorro_no_puede_moverse (juego_t juego) {
 bool comer_oca (juego_t* juego, char movimiento, coordenada_t posicion) {
 	coordenada_t auxiliar = posicion;
 	bool devoro = false;
-	int indice_oca = buscar_oca ((*juego).ocas, (*juego).tope_ocas, auxiliar);
+	int indice_oca = 0 ;/*buscar_oca ((*juego).ocas, (*juego).tope_ocas, auxiliar);*/
 	if (indice_oca != NO_ENCONTRADX) {
 		switch (movimiento) {
 			case ARRIBA:
@@ -180,9 +180,9 @@ bool comer_oca (juego_t* juego, char movimiento, coordenada_t posicion) {
 			auxiliar.fila ++;
 			break;
 		}
-		if (esta_dentro_tablero (auxiliar, MAX_FILAS, MAX_COLUMNAS) && (buscar_oca ((*juego).ocas, (*juego).tope_ocas, auxiliar) == NO_ENCONTRADX)) {
+		if (esta_dentro_tablero (auxiliar, MAX_FILAS, MAX_COLUMNAS) /*&& (buscar_oca ((*juego).ocas, (*juego).tope_ocas, auxiliar) == NO_ENCONTRADX)*/) {
 			(*juego).zorro.posicion = auxiliar;
-			eliminar_oca ((*juego).ocas, &(*juego).tope_ocas, posicion);
+			/*eliminar_oca ((*juego).ocas, &(*juego).tope_ocas, posicion);*/
 			(*juego).zorro.ocas_capturadas ++;
 			if ((*juego).zorro.ocas_capturadas >= OCAS_PARA_GANAR) {
 				(*juego).zorro.comio_suficientes_ocas = true;
@@ -191,9 +191,10 @@ bool comer_oca (juego_t* juego, char movimiento, coordenada_t posicion) {
 		}
 	}
 	return devoro;
-}
+	}
 
 
+//mover y comer oca no lo mismo?
 bool mover_zorro (juego_t* juego, char movimiento) {
 	coordenada_t auxiliar = (*juego).zorro.posicion;
 	switch (movimiento) {
@@ -227,10 +228,10 @@ bool mover_zorro (juego_t* juego, char movimiento) {
 			break;
 	}
 	if (esta_dentro_tablero (auxiliar, MAX_FILAS, MAX_COLUMNAS)) {
-		if (buscar_oca ((*juego).ocas, (*juego).tope_ocas, auxiliar) == NO_ENCONTRADX) {
+		/*if (buscar_oca ((*juego).ocas, (*juego).tope_ocas, auxiliar) == NO_ENCONTRADX) {
 			(*juego).zorro.posicion = auxiliar;
 			return true;
-		}
+		}*/
 		return comer_oca (juego, movimiento, auxiliar);
 	}
 	return false;
@@ -251,7 +252,7 @@ bool mover_oca (juego_t* juego, char movimiento, int indice_oca) {
 			auxiliar.col ++;
 			break;
 	}
-	if (esta_dentro_tablero (auxiliar, MAX_FILAS, MAX_COLUMNAS) && (!coordenadas_iguales(auxiliar, pos_zorro)) && (buscar_oca ((*juego).ocas, (*juego).tope_ocas, auxiliar) == NO_ENCONTRADX)) {
+	if (esta_dentro_tablero (auxiliar, MAX_FILAS, MAX_COLUMNAS) && (!coordenadas_iguales(auxiliar, pos_zorro)) /*&& (buscar_oca ((*juego).ocas, (*juego).tope_ocas, auxiliar) == NO_ENCONTRADX)*/) {
 		(*juego).ocas[indice_oca].posicion = auxiliar;
 		return true;
 	}
@@ -262,8 +263,8 @@ bool mover_oca (juego_t* juego, char movimiento, int indice_oca) {
 void inicializar_piezas (zorro_t* ref_zorro, oca_t ocas[CANT_OCAS], int* tope) {
 	coordenada_t pos_zorro;
 	coordenada_t pos_oca;
-	pos_zorro.col = 3;
-	pos_zorro.fila = 4;
+	pos_zorro.col = ZORRO_COL_INICIAL;
+	pos_zorro.fila = ZORRO_FIL_INICIAL;
 	(*ref_zorro).posicion = pos_zorro;
 	for (int i = 0; i < MAX_COLUMNAS; i++) {
 		for (int j = 0; j < MAX_FILAS; j++) {
@@ -281,13 +282,13 @@ void inicializar_piezas (zorro_t* ref_zorro, oca_t ocas[CANT_OCAS], int* tope) {
 
 
 void inicializar_juego (juego_t* juego) {
-	(*juego).es_turno_del_zorro = true;
-	(*juego).zorro.ocas_capturadas = 0;
-	(*juego).zorro.comio_suficientes_ocas = false;
-	(*juego).tope_ocas = 0;
-	inicializar_piezas (&(*juego).zorro, (*juego).ocas, &(*juego).tope_ocas);
-	for (int i = 0; i < (*juego).tope_ocas; i++) {
-		(*juego).ocas[i].nombre = (char)(i+65);
+	juego->es_turno_del_zorro = true;
+	juego->zorro.ocas_capturadas = 0;
+	juego->zorro.comio_suficientes_ocas = false;
+	juego->tope_ocas = 0;
+	inicializar_piezas (&(juego->zorro), juego->ocas, &juego->tope_ocas);
+	for (int i = 0; i < juego->tope_ocas; i++) {
+		juego->ocas[i].nombre = (char)(i+65);
 	}
 }
 
@@ -308,26 +309,32 @@ int estado_juego (juego_t juego) {
 void realizar_jugada (juego_t* juego) {
 	char movimiento;
 	int indice_oca;
-	if ((*juego).es_turno_del_zorro) {
-		printf ("\tEs turno del ZORRO\n");
-	}
-	else {
+	if (!juego->es_turno_del_zorro) {
 		printf ("\tEs turno de las OCAS\n");
-		char letra_oca = 0;
+		/*char letra_oca = 0;
 		pedir_oca(&letra_oca);
-		indice_oca = buscar_oca_por_letra((*juego).ocas, (*juego).tope_ocas, letra_oca);
-	}
-	pedir_movimiento (&movimiento, (*juego).es_turno_del_zorro);
-	bool se_movio_pieza = false;
-	if ((*juego).es_turno_del_zorro) {
+		indice_oca = buscar_oca_por_letra(juego->ocas, juego->tope_ocas, letra_oca);*/
+		indice_oca = 1; //para probar 
+		mover_oca (juego, movimiento, indice_oca);
+		
+	}else{
+		printf ("\tEs turno del ZORRO\n");
+		pedir_movimiento (&movimiento, (*juego).es_turno_del_zorro);
+		mover_zorro (juego, movimiento);
+
+		/*if ((*juego).es_turno_del_zorro) {
 		se_movio_pieza = mover_zorro (juego, movimiento);
+		}
+		else if (indice_oca != NO_ENCONTRADX) {
+			se_movio_pieza = mover_oca (juego, movimiento, indice_oca);
+		}
+		if (se_movio_pieza) {
+			(*juego).es_turno_del_zorro = !(*juego).es_turno_del_zorro;
+		}*/
 	}
-	else if (indice_oca != NO_ENCONTRADX) {
-		se_movio_pieza = mover_oca (juego, movimiento, indice_oca);
-	}
-	if (se_movio_pieza) {
-		(*juego).es_turno_del_zorro = !(*juego).es_turno_del_zorro;
-	}
+
+	juego->es_turno_del_zorro = !juego->es_turno_del_zorro;
+	
 }
 
 
@@ -342,7 +349,7 @@ void rellenar_cuadricula (juego_t juego, char tablero_vacio [MAX_FILAS][MAX_COLU
 				tablero_vacio [i][j] = LUGAR_VACIO;
 				casillero.fila = i;
 				casillero.col = j;
-				int oca_en_casillero = buscar_oca (juego.ocas, juego.tope_ocas, casillero);
+				int oca_en_casillero = 0; /*buscar_oca (juego.ocas, juego.tope_ocas, casillero);*/
 				if (coordenadas_iguales (casillero, juego.zorro.posicion)) {
 					tablero_vacio [i][j] = ZORRO;
 				}
