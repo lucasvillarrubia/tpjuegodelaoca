@@ -11,7 +11,27 @@ línea pa compilar:
 nasm -f elf64 main.asm -o main.o
 nasm -f elf64 inicializar_juego.asm -o inicializar_juego.o
 nasm -f elf64 imprimir_tablero.asm -o imprimir_tablero.o
-nasm -f elf64 definir_matriz.asm -o definir_matriz.o
 
 
-gcc main.o inicializar_juego.o imprimir_tablero.o definir_matriz.o -o juego
+
+gcc main.o inicializar_juego.o imprimir_tablero.o  -o juego -no-pie  -z noexecstack
+
+./juego
+
+------extra
+Si cuando tiras el comando de linkeo con GCC te da un warning rarisimo
+Sobre un stack ejecutable
+Sumar -z noexecstack como opcion lo suprime
+
+
+---------------
+GDB
+
+nasm -f elf64 -g -F dwarf -l main.lst -o main.o main.asm 
+nasm -f elf64 -g -F dwarf -l inicializar_juego.lst -o inicializar_juego.o inicializar_juego.asm 
+nasm -f elf64 -g -F dwarf -l imprimir_tablero.lst -o imprimir_tablero.o imprimir_tablero.asm 
+
+
+ gcc main.o inicializar_juego.o imprimir_tablero.o  -o juego -no-pie  -z noexecstack
+
+COMANDO COPADO: layout regs

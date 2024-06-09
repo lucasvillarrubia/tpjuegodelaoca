@@ -18,7 +18,7 @@ section .bss
 
 section .text
 main:
-    call inicializar_juego
+    ;call inicializar_juego
     ;call definir_matriz ;aca llamariamos a una funcion que pregunte que tablero quiera?
     call imprimir_tablero
     ret
