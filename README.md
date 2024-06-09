@@ -14,9 +14,9 @@ nasm -f elf64 imprimir_tablero.asm -o imprimir_tablero.o
 
 
 
-gcc main.o inicializar_juego.o imprimir_tablero.o  -o juego -no-pie  -z noexecstack
+gcc main.o inicializar_juego.o imprimir_tablero.o  -o juego.out -no-pie  -z noexecstack
 
-./juego
+./juego.out
 
 ------extra
 Si cuando tiras el comando de linkeo con GCC te da un warning rarisimo
@@ -32,6 +32,6 @@ nasm -f elf64 -g -F dwarf -l inicializar_juego.lst -o inicializar_juego.o inicia
 nasm -f elf64 -g -F dwarf -l imprimir_tablero.lst -o imprimir_tablero.o imprimir_tablero.asm 
 
 
- gcc main.o inicializar_juego.o imprimir_tablero.o  -o juego -no-pie  -z noexecstack
+ gcc main.o inicializar_juego.o imprimir_tablero.o  -o juego.out -no-pie  -z noexecstack
 
 COMANDO COPADO: layout regs
