@@ -1,5 +1,11 @@
 Para correr
 
+make
+
+./juego.out
+
+---------------
+
 sudo apt install asm
 
 si agregan archivos

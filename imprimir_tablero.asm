@@ -1,140 +1,49 @@
-
-%macro mPrintf 0
-    sub     rsp,8
-    call    printf
-    add     rsp,8
-%endmacro
-
 section .data
-    matriz  db 0, 0, 0
-            db 0, 0, 0
-            db 0, 0, 0, 0, 0, 0, 0
-            db 0, 0, 0, 0, 0, 0, 0
-            db 0, 0, 0, 0, 0, 0, 0
-            db 0, 0, 0
-            db 0, 0, 0
-
-    format_elemento db "%2d ", 0   ; Formato para imprimir cada elemento de la matriz
-    format_newline db 10, 0        ; Carácter de nueva línea para imprimir al final de cada fila
-    format_space db "   ", 0       ; Espacio para rellenar en la parte superior e inferior de la matriz
+    matriz  db ' ', ' ', 'O', 'O', 'O', ' ', ' ', 0
+            db ' ', ' ', 'O', 'O', 'O', ' ', ' ', 0
+            db 'O', 'O', 'O', 'O', 'O', 'O', 'O', 0
+            db 'O', 'O', 'O', 'O', 'O', 'O', 'O', 0
+            db 'O', 'O', 'O', 'O', 'O', 'O', 'O', 0
+            db ' ', ' ', 'O', 'O', 'O', ' ', ' ', 0
+            db ' ', ' ', 'O', 'O', 'O', ' ', ' ', 0
 
 section .text
-    extern printf
     global imprimir_tablero
-    
+
 imprimir_tablero:
-    ; Imprimir la parte superior de la matriz
-    sub     rsp, 8
-    mov     rdi, format_space
-    mPrintf
-    add     rsp, 8 
-    ; Bucle para recorrer las filas de la matriz
-    mov     rsi, matriz
-    mov     rax, 0
+    ; Alinear la pila
+    push rbp
+    mov rbp, rsp
 
-fila_loop:
-    ; Si estamos en la fila central, imprimir la barra izquierda
-    cmp     rax, 2
-    je      imprimir_barra_izquierda
+    ; Configurar los registros necesarios
+    mov rsi, matriz   ; rsi apunta al arreglo matriz
+    mov rdi, 1        ; descriptor de archivo: stdout
+    mov rax, 1        ; número de syscall para sys_write
+    xor rcx, rcx      ; limpiar rcx (contador de bucle)
 
+.loop_outer:
+    mov rdx, 0        ; resetear rdx (contador de bytes)
 
-    imprimir_barra_izquierda:
-        ; Imprimir la barra izquierda
-        sub     rsp, 8
-        mov     rdi, format_space
-        mPrintf
-        add     rsp, 8
-    ; Bucle para recorrer las columnas de la matriz
-        mov     rcx, 7
-        columna_loop:
-            ; Imprimir el elemento de la matriz
-            ;movzx   rdi, byte [rsi]
-            sub     rsp, 8
-            mov     rdx, format_elemento  ; Guardar el formato en rdx
-            mPrintf
-            ; Incrementar el puntero a la siguiente columna
-            add     rsp, 8
-            inc     rsi
+.loop_inner:
+    mov al, [rsi + rcx]  ; cargar byte de matriz en al
+    test al, al        ; verificar si al es cero (fin de fila)
+    jz .end_row        ; saltar a .end_row si al es cero
 
-            ; Si estamos en la columna central, imprimir la barra vertical
-            cmp     rcx, 4
-            je      imprimir_barra_vertical
+    add al, '0'        ; convertir byte a caracter ASCII
+    mov [rsp], al      ; almacenar caracter ASCII en la pila (temporal)
+    mov rdx, 1         ; número de bytes a escribir (1 byte)
+    syscall            ; hacer syscall para escribir caracter
 
-            ; Imprimir la parte derecha de la columna
-            sub     rsp, 8
-            mov     rdi, format_space
-            mPrintf
-            add     rsp, 8
-            jmp     siguiente_elemento
+    inc rcx            ; mover al siguiente byte en matriz
+    jmp .loop_inner    ; repetir bucle interno
 
-imprimir_barra_vertical:
-    ; Imprimir la barra vertical
-    sub     rsp, 8
-    mov     rdi, format_space
-    mPrintf
-    add     rsp, 8
+.end_row:
+    add rcx, 1         ; mover al inicio de la siguiente fila (omitir el cero terminador)
+    cmp rcx, 56        ; verificar si todos los bytes (7 filas * 8 columnas)
+    jl .loop_outer     ; saltar a .loop_outer si rcx es menor que 56
 
-siguiente_elemento:
-    ; Salto al siguiente elemento de la fila
-    dec     rcx
-    jnz     columna_loop
-
-    ; Si estamos en la fila central, imprimir la barra derecha
-    cmp     rax, 2
-    je      imprimir_barra_derecha
-
-    ; Imprimir la parte derecha de la fila
-    sub     rsp, 8
-    mov     rdi, format_space
-    mPrintf
-    add     rsp, 8
-
-    ; Salto a la siguiente fila de la matriz
-    inc     rax
-    cmp     rax, 5
-    jl      fila_loop
-
-    ; Imprimir la parte inferior de la matriz
-    mov     rdi, format_space
-    mPrintf
-
-    ; Imprimir una nueva línea al final de la matriz
-    mov     rdi, format_newline
-    mPrintf
-
-    add     rsp, 8
-    ret
-
-imprimir_barra_derecha:
-    ; Imprimir la barra derecha
-    sub     rsp, 8
-    mov     rdi, format_space
-    mPrintf
-    add     rsp, 8
-    inc     rax
-    cmp     rax, 5
-    jl      fila_loop
-    
-    sub     rsp, 8
-    mov     rdi, format_space
-    mPrintf
-    add     rsp, 8
-    
-    
-    ; Imprimir una nueva línea al final de la matriz
-    sub     rsp, 8
-    mov     rdi, format_newline
-    mPrintf
-    add     rsp, 8
-
-    ret
-
-imprimir_parte_inferior:
-    ; Imprimir la parte inferior de la matriz
-    sub     rsp, 8
-    mov     rdi, format_space
-    mPrintf
-    add     rsp, 8   
-
+    ; Restaurar la pila
+    mov rsp, rbp
+    pop rbp
 
     ret
