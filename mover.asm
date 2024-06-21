@@ -30,7 +30,7 @@
 ; - (0) si el movimiento fue exitoso y cambió la posición del zorro
 ; - (-1) caso especial de interrupción voluntaria del programa
 ;
-; SI LA POSICIÓN DEL ZORRO CAMBIA (rax = 0) SE DEVUELVE:
+; SI LA POSICIÓN DEL ZORRO CAMBIA (rax = 0) SE DEVUELVE POSICIÓN Y SI CAPTURÓ:
 ; - int fila                en edi
 ; - int columna             en esi
 ; - int captura_reciente    en edx
