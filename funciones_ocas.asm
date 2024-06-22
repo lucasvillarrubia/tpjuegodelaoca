@@ -3,14 +3,11 @@
 %define CANT_OCAS 17
 %define NO_ENCONTRADX -1
 %define OCA 'O'
-%define FUERA_TABLERO 'X'
-%define LUGAR_VACIO '-'
 %define TAMAÑO_OCA 2
 %define ARRIBA 'W'
 %define IZQUIERDA 'A'
 %define ABAJO 'S'
 %define DERECHA 'D'
-
 
 
 global  main
@@ -21,9 +18,6 @@ global  eliminar_oca
 
 
 section .data
-    cantidad_ocas               db 17
-    ocas_largo                  db 34
-
 
 
 section .bss
@@ -36,34 +30,46 @@ section .bss
     auxiliar_columna            resb 1
 section .text
 
-; ignorar main e inicializar_juego los uso para probar cosas
+; ignorar main, lo uso para probar cosas
 main:
-    call        inicializar_juego
-    ret
-
-
-inicializar_juego:
     lea     rdi, [vector_ocas]
-    lea     rsi, [movimientos_validos]
+    lea     rsi, [movimientos_validos] ; uso un vector de movimientos para saber cual es el valido, talvez pueda servir mas
+                                       ; cuando rotemos la matriz y las ocas tengan un movimiento no disponible
     lea     rdx, [tope_ocas]
     call    inicializar_ocas
     ; mov     al, [vector_ocas + 1]
     ; cbw
     ; cwde
     ; cdqe
-    mov     byte[auxiliar_fila], 0
-    mov     byte[auxiliar_columna], 3
+
     lea     rdi, [vector_ocas]
     mov     sil, [tope_ocas]
-    mov     dl, [auxiliar_fila]
-    mov     cl, [auxiliar_columna]
+    mov     dl, 0 ; auxiliar_fila
+    mov     cl, 3 ; auxiliar_columna
     call    buscar_indice_de_oca
+
+    lea     rdi, [vector_ocas]
+    mov     sil, ABAJO ; direccion de movimiento
+    mov     dl, 4 ; fila del zorro
+    mov     cl, 3 ; columna del zorro
+    mov     r8, 18 ; indice de la oca (tiene en cuenta que hay 2 elementos por oca) (oca numero 9)
+    mov     r9, [tope_ocas] ; tope del vector
+    call    mover_oca
+
+    lea     rdi, [vector_ocas]
+    mov     sil, [tope_ocas]
+    mov     dl, 3
+    mov     cl, 3
+    call    eliminar_oca
+
     ret
 
 
-; (rdi, rsi, rdx)
+
 ; asumo que el vector de ocas es una variable? los movimientos_validos tambien? (por ahora los recibo por parametro)
-; pre: (vector_ocas: rdi, movimientos_validos: rsi, tope_ocas: rdx)
+; (rdi, rsi, rdx)
+; (vector_ocas: rdi, movimientos_validos: rsi, tope_ocas: rdx)
+; post: inicializa las ocas desde arriba hacia abajo (filas superiores) y de izquierda a derecha, devuelve el puntero al vector en rax
 inicializar_ocas:
     call    inicializar_movimientos_validos
     mov     rax, rdi; dejo el puntero al inicio del vector en rax
@@ -100,29 +106,29 @@ inicializar_ocas:
         ret
 
     comprobar_condiciones_de_inicializacion:
-        cmp rcx, 2      ; si la oca esta en la fila 3 la agrego
+        cmp rbx, 2      ; si la oca esta en la fila 3 la agrego
         je agregar_a_vector_de_ocas
 
-        cmp rbx, 1
+        cmp rcx, 1
         jle segunda_condicion_de_inicializacion
-        cmp rbx, 5
+        cmp rcx, 5
         jge segunda_condicion_de_inicializacion
 
-        cmp rcx, 0      ; si la oca esta entre la columna 1 y 5 (sin incluir) y en la fila 1 la agrego
+        cmp rbx, 0      ; si la oca esta entre la columna 1 y 5 (sin incluir) y en la fila 1 la agrego
         je agregar_a_vector_de_ocas
-        cmp rcx, 1      ; si la oca esta entre la columna 1 y 5 (sin incluir) y en la fila 2 la agrego
+        cmp rbx, 1      ; si la oca esta entre la columna 1 y 5 (sin incluir) y en la fila 2 la agrego
         je agregar_a_vector_de_ocas
 
     segunda_condicion_de_inicializacion:
-        cmp rbx, 0      ; si la oca esta en la columna 1 compruebo la siguiente condicion
+        cmp rcx, 0      ; si la oca esta en la columna 1 compruebo la siguiente condicion
         je tercera_condicion_de_inicializacion
-        cmp rbx, 6      ; si la oca esta en la columna 7 compruebo la siguiente condicion
+        cmp rcx, 6      ; si la oca esta en la columna 7 compruebo la siguiente condicion
         jne no_cumple_ninguna_condicion
 
     tercera_condicion_de_inicializacion:
-        cmp rcx, 3      ; si la oca esta en la fila 3 la agrego
+        cmp rbx, 3      ; si la oca esta en la fila 3 la agrego
         je agregar_a_vector_de_ocas
-        cmp rcx, 4      ; si la oca esta en la fila 4 la agrego
+        cmp rbx, 4      ; si la oca esta en la fila 4 la agrego
         je agregar_a_vector_de_ocas
 
     no_cumple_ninguna_condicion:
@@ -135,8 +141,19 @@ inicializar_ocas:
         add     byte[rdx], 2
         jmp     avanzar_segundo_loop
 
+
+
+
+
+
+
+
+
+; FUNCION PRINCIPAL
 ; (rdi, rsi, rdx, rcx)
 ; (vector_ocas: rdi, tope_ocas: sil, auxiliar_fila: dl, auxiliar_columna: cl)
+; post: devuelvo el indice de la oca en el vector, teniendo en cuenta que son 2 
+;       elementos por oca, ej: oca Nro 9 devuelve indice 18.
 buscar_indice_de_oca:
     mov     [auxiliar_fila], dl
     mov     [auxiliar_columna], cl
@@ -162,7 +179,8 @@ buscar_indice_de_oca:
         ret ; asumo que donde me llamen voy a usar el rax -1 para decir que no encontre la oca
 
 
-; (necesito que las 4 variables vengan correctamente inicializadas)
+
+; pre: auxiliar_fila, auxiliar_columna, fila_a_comparar y columna_a_comparar tienen que estar inicializados
 comprobar_posiciones_iguales:
     mov     dl, [auxiliar_fila]
     cmp     dl, [fila_a_comparar]
@@ -176,9 +194,16 @@ posiciones_distintas:
     mov     rax, -1 ; -1 representa que las posiciones no son iguales
     ret
 
+
+
+
+
+
+; FUNCION PRINCIPAL
+; el indice de oca tiene en cuenta que el vector tiene 2 valores por oca? yo lo tome como que si
 ; (rdi, rsi, rdx, rcx, r8, r9)
-; (vector_de_ocas: rdi, movimiento: sil, zorro_fila: dl, zorro_columna: cl,  indice_de_oca: r8b, tope_ocas: r9b)  
-; el indice de oca tiene en cuenta que el vector tiene 2 valores por oca?
+; (vector_de_ocas: rdi, movimiento: sil, zorro_fila: dl, zorro_columna: cl,  indice_de_oca: r8, tope_ocas: r9)  
+; post: si se pudo mover la oca entonces devuelve 1 en rax, sino devuelve -1.
 mover_oca:
     call    comprobar_movimiento_valido
     cmp     rax, 0 ;si no recibo una letra valida entonces no se puede mover
@@ -209,104 +234,113 @@ mover_oca:
     mov     rax, 1
     ret
 
-comprobar_movimiento_valido:
-    cmp     sil, [movimientos_validos]
-    je      mover_izquierda
-    cmp     sil, [movimientos_validos + 1]
-    je      mover_abajo
-    cmp     sil, [movimientos_validos + 2]
-    je      mover_derecha
-    mov     rax, -1
-    ret
+    comprobar_movimiento_valido:
+        cmp     sil, [movimientos_validos]
+        je      mover_izquierda
+        cmp     sil, [movimientos_validos + 1]
+        je      mover_abajo
+        cmp     sil, [movimientos_validos + 2]
+        je      mover_derecha
+        mov     rax, -1
+        ret
 
 
-; ()
-mover_izquierda:
-    mov     al, [rdx + r8]
-    mov     [auxiliar_fila], al
-    mov     al, [rdx + r8 + 1]
-    mov     [auxiliar_columna], al
-    dec     byte[auxiliar_columna]
-    mov     rax, 1
-    ret
+    mover_izquierda:
+        mov     al, [rdi + r8]
+        mov     [auxiliar_fila], al
+        mov     al, [rdi + r8 + 1]
+        mov     [auxiliar_columna], al
+        dec     byte[auxiliar_columna]
+        mov     rax, 1
+        ret
 
-mover_abajo:
-    mov     al, [rdx + r8]
-    mov     [auxiliar_fila], al
-    mov     al, [rdx + r8 + 1]
-    mov     [auxiliar_columna], al
-    dec     byte[auxiliar_fila]
-    mov     rax, 1
+    mover_abajo:
+        mov     al, [rdi + r8]
+        mov     [auxiliar_fila], al
+        mov     al, [rdi + r8 + 1]
+        mov     [auxiliar_columna], al
+        inc     byte[auxiliar_fila]
+        mov     rax, 1
+        ret
 
-mover_derecha:
-    mov     al, [rdx + r8]
-    mov     [auxiliar_fila], al
-    mov     al, [rdx + r8 + 1]
-    mov     [auxiliar_columna], al
-    inc     byte[auxiliar_columna]
-    mov     rax, 1
+    mover_derecha:
+        mov     al, [rdi + r8]
+        mov     [auxiliar_fila], al
+        mov     al, [rdi + r8 + 1]
+        mov     [auxiliar_columna], al
+        inc     byte[auxiliar_columna]
+        mov     rax, 1
+        ret
 
-; uso auxiliar_fila y auxiliar_columna
-esta_dentro_de_tablero:
-    cmp     byte[auxiliar_fila], 0 ;fila_elemento tiene que ser >= 0
-    jl      elemento_fuera_del_tablero
-    cmp     byte[auxiliar_fila], 6 ;fila_elemento tiene que ser <= 6
-    jg      elemento_fuera_del_tablero
-    cmp     byte[auxiliar_columna], 0 ;columna_elemento tiene que ser >= 0
-    jl      elemento_fuera_del_tablero
-    cmp     byte[auxiliar_columna], 6 ;columna_elemento tiene que ser <= 6
-    jg      elemento_fuera_del_tablero
+    ; uso auxiliar_fila y auxiliar_columna
+    esta_dentro_de_tablero:
+        cmp     byte[auxiliar_fila], 0 ;fila_elemento tiene que ser >= 0
+        jl      elemento_fuera_del_tablero
+        cmp     byte[auxiliar_fila], 6 ;fila_elemento tiene que ser <= 6
+        jg      elemento_fuera_del_tablero
+        cmp     byte[auxiliar_columna], 0 ;columna_elemento tiene que ser >= 0
+        jl      elemento_fuera_del_tablero
+        cmp     byte[auxiliar_columna], 6 ;columna_elemento tiene que ser <= 6
+        jg      elemento_fuera_del_tablero
 
-    cmp     byte[auxiliar_fila], 2 ;si fila_elemento es < 2 compruebo la otra condicion
-    jl      comprobar_columna_valida
-    cmp     byte[auxiliar_fila], 4 ;si fila_elemento es > 4 compruebo la otra condicion
-    jg      comprobar_columna_valida
-    jmp     elemento_dentro_del_tablero ;si paso las demas comprobaciones entonces esta dentro del tablero
-
-
-    comprobar_columna_valida:
-    cmp     byte[auxiliar_columna], 2 ;si columna_elemento es < 2 entonces no esta en el tablero
-    jl      elemento_fuera_del_tablero
-    cmp     byte[auxiliar_columna], 4 ;si columna_elemento es > 4 entonces no esta en el tablero
-    jg      elemento_fuera_del_tablero
-    jmp     elemento_dentro_del_tablero ;si paso las demas comprobaciones entonces esta dentro del tablero
-
-    elemento_dentro_del_tablero:
-    mov     rax, 1 ;con rax 1 digo que esta dentro del tablero
-    ret
-
-    elemento_fuera_del_tablero:
-    mov     rax, -1 ;con rax -1 digo que no esta dentro del tablero
-    ret
-
-no_se_puede_mover_la_oca:
-    mov     rax, -1
-    ret
+        cmp     byte[auxiliar_fila], 2 ;si fila_elemento es < 2 compruebo la otra condicion
+        jl      comprobar_columna_valida
+        cmp     byte[auxiliar_fila], 4 ;si fila_elemento es > 4 compruebo la otra condicion
+        jg      comprobar_columna_valida
+        jmp     elemento_dentro_del_tablero ;si paso las demas comprobaciones entonces esta dentro del tablero
 
 
+        comprobar_columna_valida:
+        cmp     byte[auxiliar_columna], 2 ;si columna_elemento es < 2 entonces no esta en el tablero
+        jl      elemento_fuera_del_tablero
+        cmp     byte[auxiliar_columna], 4 ;si columna_elemento es > 4 entonces no esta en el tablero
+        jg      elemento_fuera_del_tablero
+        jmp     elemento_dentro_del_tablero ;si paso las demas comprobaciones entonces esta dentro del tablero
 
+        elemento_dentro_del_tablero:
+        mov     rax, 1 ;con rax 1 digo que esta dentro del tablero
+        ret
+
+        elemento_fuera_del_tablero:
+        mov     rax, -1 ;con rax -1 digo que no esta dentro del tablero
+        ret
+
+    no_se_puede_mover_la_oca:
+        mov     rax, -1 ;con rax -1 digo que la oca no se pudo mover
+        ret
+
+
+
+
+
+; FUNCION PRINCIPAL
 ; (rdi, rsi, rdx, rcx)
 ; (vector_de_ocas: rdi, tope_ocas: rsi, auxiliar_fila: dl, auxiliar_columna: cl)  
+; post: si la oca existe reduce el tope en 2 y reacomoda el vector para que la oca buscada
+;       este fuera del tope y devuelve 1 en rax, si la oca no existe devuelve -1 en rax.
 eliminar_oca:
     call    buscar_indice_de_oca
     cmp     rax, -1
     je      no_se_puede_eliminar_oca
-    sub     byte[tope_ocas], 2 ; le quito una oca al vector (con el tope)
+    sub     byte[rsi], 2 ; le quito una oca al vector (con el tope)
     mov     rbx, rax
     ; actualizo el vector para sacar la oca que quiero eliminar
     loop_eliminar_oca:
-        cmp     rbx, [tope_ocas]
+        mov     al, [rsi]
+        cmp     rbx, [rsi]
         jge     terminar_loop_eliminar_oca
         mov     dl, [rdi + rbx + 2] ; agarro la proxima fila
         mov     [rdi + rbx], dl ; la pongo en la fila del actual
         mov     cl, [rdi + rbx + 3] ; agarro la proxima columna
         mov     [rdi + rbx + 1], dl ; la pongo en la columna del actual
         add     rbx, 2
+        jmp     loop_eliminar_oca
     terminar_loop_eliminar_oca:
         mov     rax, 1
-no_se_puede_eliminar_oca:
-    mov     rax, -1
-    ret
+        ret
+    no_se_puede_eliminar_oca:
+        mov     rax, -1
+        ret
 
 
 ; hacer inicializacion (terminado)
