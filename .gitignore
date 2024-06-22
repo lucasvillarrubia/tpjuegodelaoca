@@ -1,0 +1,5 @@
+
+# Archivos de compilación
+*.o
+*.lst
+*.out
