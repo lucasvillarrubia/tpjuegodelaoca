@@ -129,7 +129,7 @@ movimiento_exitoso:
     mov esi, [zorro_fila]
     mov edx, [zorro_columna]
     sub rsp, 8
-    call verificar
+    call verificar_estado_juego
     add rsp, 8
     cmp rax, 0
     jg ganaste
@@ -156,7 +156,7 @@ imprimir_captura:
     mov esi, [zorro_fila]
     mov edx, [zorro_columna]
     sub rsp, 8
-    call verificar
+    call verificar_estado_juego
     add rsp, 8
     cmp rax, 0
     jg ganaste
