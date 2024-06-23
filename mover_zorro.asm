@@ -56,8 +56,8 @@ section .data
     ;prints de pruebas
     mensaje_input_erroneo db "che, metiste cualquiera", 10, 0
     mensaje_mov_erroneo db "nono, esa letra no sirve", 10, 0
-    mensaje_limites db "cagaste, estas afuera", 10, 0
-    mensaje_sin_capturar db "te cagaste de hambre", 10, 0
+    ;mensaje_limites db "cagaste, estas afuera", 10, 0
+    ;mensaje_sin_capturar db "te cagaste de hambre", 10, 0
 
 section .bss
     movimiento resb 1
@@ -71,6 +71,8 @@ mover:
     mov [fila], esi
     mov [columna], edx
     mov [captura_reciente], ecx
+
+
 movimiento_es_letra:
 movimiento_es_minuscula:
     cmp byte [movimiento], 97
@@ -122,6 +124,8 @@ es_movimiento_valido:
     cmp byte [movimiento], 120 ;x
     je mov_abajo_derecha
     jmp error_movimiento
+
+
 mov_izquierda:
     dec dword [columna]
     call esta_dentro_tablero
@@ -174,9 +178,10 @@ mov_abajo_derecha:
     cmp rax, 0
     jne termina_fuera_de_limites
     jmp exito
+
+
 esta_dentro_tablero:
     mov rax, 0
-    ; condiciones del tablero por defecto: FALTAN BLOQUEAR LAS ESQUINAS
     cmp dword [fila], 1
     jl fuera_de_rango
     cmp dword [fila], MAX_FILAS
@@ -185,20 +190,31 @@ esta_dentro_tablero:
     jl fuera_de_rango
     cmp dword [columna], MAX_COLUMNAS
     jg fuera_de_rango
-    ; ___________________________________
+    cmp dword [columna], 3
+    jl chequear_esquinas
+    cmp dword [columna], 5
+    jg chequear_esquinas
+    ret
+chequear_esquinas:
+    cmp dword [fila], 3
+    jl fuera_de_rango
+    cmp dword [fila], 5
+    jg fuera_de_rango
     ret
 fuera_de_rango:
     mov rax, 1
     ret
+
+
 termina_fuera_de_limites:
-    lea rdi, [rel mensaje_limites]
-    mPrintf
+    ;lea rdi, [rel mensaje_limites]
+    ;mPrintf
     mov edi, [captura_reciente]
     mov rax, 1
     ret
 termina_sin_capturar:
-    lea rdi, [rel mensaje_sin_capturar]
-    mPrintf
+    ;lea rdi, [rel mensaje_sin_capturar]
+    ;mPrintf
     mov edi, [captura_reciente]
     mov rax, 1
     ret
@@ -219,6 +235,8 @@ error_movimiento:
     mov edi, [captura_reciente]
     mov rax, 1
     ret
+
+
 exito:
 
     ; argumentos para mandar a función "hay_una_oca"
@@ -262,6 +280,8 @@ ubicar_zorro:
     mov esi, [columna]
     mov edx, [captura_reciente]
     ret
+
+
 salida:
     mov rax, -1
     ret

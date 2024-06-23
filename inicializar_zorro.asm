@@ -1,5 +1,5 @@
-%define ZORRO_FIL_INICIAL 4
-%define ZORRO_COL_INICIAL 3
+%define ZORRO_FIL_INICIAL 3
+%define ZORRO_COL_INICIAL 4
 
 
 ;

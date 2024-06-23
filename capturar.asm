@@ -118,7 +118,6 @@ mov_abajo_derecha:
     jmp exito
 esta_dentro_tablero:
     mov rax, 0
-    ; condiciones del tablero por defecto: FALTAN BLOQUEAR LAS ESQUINAS
     cmp dword [fila], 1
     jl fuera_de_rango
     cmp dword [fila], MAX_FILAS
@@ -127,7 +126,16 @@ esta_dentro_tablero:
     jl fuera_de_rango
     cmp dword [columna], MAX_COLUMNAS
     jg fuera_de_rango
-    ; ___________________________________
+    cmp dword [columna], 3
+    jl chequear_esquinas
+    cmp dword [columna], 5
+    jg chequear_esquinas
+    ret
+chequear_esquinas:
+    cmp dword [fila], 3
+    jl fuera_de_rango
+    cmp dword [fila], 5
+    jg fuera_de_rango
     ret
 fuera_de_rango:
     mov rax, 1
