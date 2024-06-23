@@ -79,8 +79,8 @@ buscar_contenido_casillero:
     mov rax, 1
     cmp rax, 0
     je rellenar_oca
-    ; ESTÁ FUERA DE RANGO?
-    ; falta llamada a esta_fuera_de_rango
+    ; ESTÁ DENTRO DEL TABLERO?
+    ; falta llamada a esta_dentro_rango
     mov rax, 1
     cmp rax, 0
     je rellenar_fuera_de_tablero
