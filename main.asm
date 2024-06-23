@@ -182,3 +182,4 @@ perdiste:
     lea rdi, [rel aviso_derrota]
     mPrintf
     ret
+

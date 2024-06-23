@@ -1,33 +1,43 @@
+Para correr
+
+make
+
+./juego.out
+
+---------------
+
+sudo apt install asm
+
+si agregan archivos
+- actualizar linea para compilar ( ver issue de ahcer make file :)
+- agregas el .o de su asm ak git ignore
+
 línea pa compilar:
 
-gcc *.c -o jueguito -std=c99 -Wall -Wconversion -Werror -Wtype-limits -Wextra -lm
-
-y pa ejecutar:
-
-./jueguito
+nasm -f elf64 main.asm -o main.o
+nasm -f elf64 inicializar_juego.asm -o inicializar_juego.o
+nasm -f elf64 imprimir_tablero.asm -o imprimir_tablero.o
 
 
-cosas horribles que no arreglé:
-- switches en mover_oca y mover_zorro (y su repetición)
-- valores literales (everywhere)
-- condiciones de if largas
-- tampoco agregué operadores ternarios
+
+gcc main.o inicializar_juego.o imprimir_tablero.o  -o juego.out -no-pie  -z noexecstack
+
+./juego.out
+
+------extra
+Si cuando tiras el comando de linkeo con GCC te da un warning rarisimo
+Sobre un stack ejecutable
+Sumar -z noexecstack como opcion lo suprime
 
 
-extras:
-- no arreglé pre y posts del headers file (sólo las borré)
-- no están las instrucciones completas para el jugador
-- no agregué las condiciones para jugar con letras minúsculas
-- faltaría un caso de victoria de las ocas:
-  en el que quedan 6 juntas en los casilleros de abajo del tablero;
-  no pueden retroceder y el zorro no puede comer a ninguna (y como máximo sólo habrá comido 11)
+---------------
+GDB
+
+nasm -f elf64 -g -F dwarf -l main.lst -o main.o main.asm 
+nasm -f elf64 -g -F dwarf -l inicializar_juego.lst -o inicializar_juego.o inicializar_juego.asm 
+nasm -f elf64 -g -F dwarf -l imprimir_tablero.lst -o imprimir_tablero.o imprimir_tablero.asm 
 
 
-con respecto al tp:
-- el zorro todavía no puede hacer saltos múltiples comiendo ocas
-- no se imprimen ni guardan las estadísticas de movimiento del zorro
-- bueno lo de la "personalización" falta también (capaz será suficiente con unicode o codigos ascii)
-- guardar partida y recuperar: tengo que buscar mi otro tp de algo1
+ gcc main.o inicializar_juego.o imprimir_tablero.o  -o juego.out -no-pie  -z noexecstack
 
-
-that´s all
+COMANDO COPADO: layout regs
