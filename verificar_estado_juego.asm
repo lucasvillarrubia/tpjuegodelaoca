@@ -6,7 +6,7 @@
 ; - EL ZORRO ACABA DE COMER UNA OCA (SE VERIFICA SI GANÓ O NO, DESPUÉS SI PERDIÓ)
 ;
 
-global verificar
+global verificar_estado_juego
 
 
 section .data
@@ -18,7 +18,7 @@ section .bss
 
 
 section .text
-verificar:
+verificar_estado_juego:
     mov [ocas_capturadas], edi
     mov [fila], esi
     mov [columna], edx

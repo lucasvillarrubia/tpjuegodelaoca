@@ -35,8 +35,8 @@ extern printf
 extern scanf
 extern getchar
 extern system
-extern mover
-extern verificar
+extern mover_zorro
+extern verificar_estado_juego
 global main
 
 
@@ -104,13 +104,13 @@ descartar_sobra_input:
     mGetchar
     cmp rax, 10
     jne descartar_sobra_input
-mover_zorro:
+mover:
     mov dil, [movimiento]
     mov esi, [zorro_fila]
     mov edx, [zorro_columna]
     mov ecx, [captura_reciente]
     sub rsp, 8
-    call mover
+    call mover_zorro
     add rsp, 8
     cmp rax, 0
     jg error

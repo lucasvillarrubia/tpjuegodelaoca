@@ -46,7 +46,7 @@
 %endmacro
 
 
-global mover
+global mover_zorro
 extern hay_una_oca
 extern capturar
 extern printf
@@ -66,7 +66,7 @@ section .bss
     captura_reciente resd 1
 
 section .text
-mover:
+mover_zorro:
     mov [movimiento], dil
     mov [fila], esi
     mov [columna], edx

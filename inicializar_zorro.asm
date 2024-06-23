@@ -23,7 +23,7 @@
 
 
 extern printf
-global main
+global inicializar_zorro
 
 
 section .data
@@ -39,7 +39,7 @@ section .bss
 
 
 section .text
-main:
+inicializar_zorro:
 inicializar:
     mov dword [zorro_fila], ZORRO_FIL_INICIAL
     mov dword [zorro_columna], ZORRO_COL_INICIAL
