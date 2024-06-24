@@ -47,6 +47,8 @@ extern system
 extern mover_zorro
 extern verificar_estado_juego
 
+extern inicializar_zorro
+
 ;parte de ocas
 extern inicializar_ocas
 extern buscar_indice_de_oca
@@ -85,7 +87,7 @@ section .bss
     fila_zorro                  resd 1
     columna_zorro               resd 1
     ocas_capturadas             resd 1
-    zorro_ocas_capturadas       resb 1
+    zorro_ocas_capturadas_memoria       resb 1 ;;IMPORTANTE CAMBIE NOMBRE POR QUE FLAG ME DECIA QUE HABIA CONFLICTOOOO
     vector_ocas                 times CANT_OCAS resb TAMAÑO_OCA
     tope_ocas                   resb 1
     movimientos_validos         times 3 resb 1
@@ -99,6 +101,20 @@ section .bss
 
 section .text
 main:
+
+mover_personajes:
+    lea     rdi, [fila_zorro]
+    lea     rsi, [columna_zorro]
+    lea     rdx, [ocas_capturadas]
+    mov     rcx, IZQUIERDA ; LA ORIENTACION PEDIDA ESTA HARDCODEADA, ESTO ME LO DEBERIAN PASAR
+    lea     r8, [zorro_ocas_capturadas]
+    call    inicializar_zorro
+    lea     rdi, [vector_ocas]
+    lea     rsi, [movimientos_validos] ; uso un vector de movimientos para saber cual es el valido, talvez pueda servir mas
+                                       ; cuando rotemos la matriz y las ocas tengan un movimiento no disponible
+    lea     rdx, [tope_ocas]
+    mov     rcx, IZQUIERDA ; LA ORIENTACION PEDIDA ESTA HARDCODEADA, ESTO ME LO DEBERIAN PASAR
+    call    inicializar_ocas
 inicializar:
     mov dword [zorro_fila], ZORRO_FIL_INICIAL
     mov dword [zorro_columna], ZORRO_COL_INICIAL
@@ -209,19 +225,4 @@ perdiste:
     mPrintf
     ret
 
-
-nueva_parte_ocas:
-    lea     rdi, [fila_zorro]
-    lea     rsi, [columna_zorro]
-    lea     rdx, [ocas_capturadas]
-    mov     rcx, IZQUIERDA ; LA ORIENTACION PEDIDA ESTA HARDCODEADA, ESTO ME LO DEBERIAN PASAR
-    lea     r8, [zorro_ocas_capturadas]
-    call    inicializar_zorro
-    lea     rdi, [vector_ocas]
-    lea     rsi, [movimientos_validos] ; uso un vector de movimientos para saber cual es el valido, talvez pueda servir mas
-                                       ; cuando rotemos la matriz y las ocas tengan un movimiento no disponible
-    lea     rdx, [tope_ocas]
-    mov     rcx, IZQUIERDA ; LA ORIENTACION PEDIDA ESTA HARDCODEADA, ESTO ME LO DEBERIAN PASAR
-    call    inicializar_ocas
-    ret
     
