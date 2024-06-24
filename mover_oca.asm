@@ -54,6 +54,8 @@ mover_oca:
         je      mover_abajo
         cmp     sil, [r10 + 2]
         je      mover_derecha
+        cmp     sil, [r10 + 3]
+        je      mover_arriba
         mov     rax, -1
         ret
 
@@ -85,6 +87,14 @@ mover_oca:
         mov     rax, 1
         ret
 
+    mover_arriba:
+        mov     al, [rdi + r8]
+        mov     [auxiliar_fila], al
+        mov     al, [rdi + r8 + 1]
+        mov     [auxiliar_columna], al
+        dec     byte[auxiliar_fila]
+        mov     rax, 1
+        ret
     ; uso auxiliar_fila y auxiliar_columna
     esta_dentro_de_tablero:
         cmp     byte[auxiliar_fila], 1 ;fila_elemento tiene que ser >= 1

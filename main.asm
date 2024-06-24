@@ -47,11 +47,14 @@ extern system
 extern mover_zorro
 extern verificar_estado_juego
 
+extern inicializar_zorro
+
 ;parte de ocas
 extern inicializar_ocas
 extern buscar_indice_de_oca
 extern mover_oca
 extern eliminar_oca
+
 global main
 
 section .data
@@ -81,9 +84,14 @@ section .data
 
 section .bss
     ;seccion ocas
+    fila_zorro                  resd 1
+    columna_zorro               resd 1
+    ocas_capturadas             resd 1
+    zorro_ocas_capturadas_memoria       resb 1 ;;IMPORTANTE CAMBIE NOMBRE POR QUE FLAG ME DECIA QUE HABIA CONFLICTOOOO
     vector_ocas                 times CANT_OCAS resb TAMAÑO_OCA
     tope_ocas                   resb 1
     movimientos_validos         times 3 resb 1
+    
     ;seccion zorro
     zorro_fila resd 1
     zorro_columna resd 1
@@ -93,6 +101,20 @@ section .bss
 
 section .text
 main:
+
+mover_personajes:
+    lea     rdi, [fila_zorro]
+    lea     rsi, [columna_zorro]
+    lea     rdx, [ocas_capturadas]
+    mov     rcx, IZQUIERDA ; LA ORIENTACION PEDIDA ESTA HARDCODEADA, ESTO ME LO DEBERIAN PASAR
+    lea     r8, [zorro_ocas_capturadas]
+    call    inicializar_zorro
+    lea     rdi, [vector_ocas]
+    lea     rsi, [movimientos_validos] ; uso un vector de movimientos para saber cual es el valido, talvez pueda servir mas
+                                       ; cuando rotemos la matriz y las ocas tengan un movimiento no disponible
+    lea     rdx, [tope_ocas]
+    mov     rcx, IZQUIERDA ; LA ORIENTACION PEDIDA ESTA HARDCODEADA, ESTO ME LO DEBERIAN PASAR
+    call    inicializar_ocas
 inicializar:
     mov dword [zorro_fila], ZORRO_FIL_INICIAL
     mov dword [zorro_columna], ZORRO_COL_INICIAL
@@ -203,32 +225,4 @@ perdiste:
     mPrintf
     ret
 
-
-nueva_parte_ocas:
-    lea     rdi, [vector_ocas]
-    lea     rsi, [movimientos_validos] ; uso un vector de movimientos para saber cual es el valido, talvez pueda servir mas
-                                       ; cuando rotemos la matriz y las ocas tengan un movimiento no disponible
-    lea     rdx, [tope_ocas]
-    call    inicializar_ocas
-
-    lea     rdi, [vector_ocas]
-    mov     sil, [tope_ocas]
-    mov     dl, 3 ; auxiliar_fila
-    mov     cl, 6 ; auxiliar_columna
-    call    buscar_indice_de_oca
-    lea     rdi, [vector_ocas]
-    mov     sil, ABAJO ; direccion de movimiento
-    mov     dl, 5 ; fila del zorro
-    mov     cl, 4 ; columna del zorro
-    mov     r8, 18 ; indice de la oca (tiene en cuenta que hay 2 elementos por oca) (oca numero 9)
-    mov     r9, [tope_ocas] ; tope del vector
-    lea     r10, [movimientos_validos]
-    call    mover_oca
-    lea     rdi, [vector_ocas]
-    mov     sil, [tope_ocas]
-    mov     dl, 3
-    mov     cl, 3
-    call    eliminar_oca
-
-ret
     
