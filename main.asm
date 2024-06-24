@@ -46,8 +46,8 @@ global main
 
 
 section .data
-    zorro_ocas_capturadas dd 0          ;
-    zorro_comio_suficientes db 0        ;   datos lógica zorro
+    zorro_ocas_capturadas dd 0   
+    zorro_comio_suficientes_ocas db 0          ;   ;   datos lógica zorro
     ;turno_del_zorro db 1             ;mal nombre habia conflicto
     print_start db "El zorro comienza en la fila %i y en la columna %i y está ayunado", 10, 0
     print_posicion db "El zorro está en la fila %i y en la columna %i. Comió %i ocas", 10, 0
@@ -98,6 +98,10 @@ section .bss
 section .text
 main:
     sub rsp, 8
+    call imprimir_tablero 
+    add rsp, 8
+
+    sub rsp, 8
     call inicializar_juego
     add rsp, 8
     mov dword [zorro_fila], edi
@@ -121,9 +125,9 @@ loop_juego:
     ;sub rsp, 8
     ;call definir_matriz ;aca llamariamos a una funcion que pregunte que tablero quiera?
     ;add rsp, 8
-    ;sub rsp, 8
-    ;call imprimir_tablero
-    ;add rsp, 8
+    sub rsp, 8
+    call imprimir_tablero
+    add rsp, 8
 
     ; ...después de un movimiento
     cmp dword [estado_juego], 0
@@ -245,3 +249,5 @@ victoria_ocas:
 terminar_juego:
     ret
 
+
+   

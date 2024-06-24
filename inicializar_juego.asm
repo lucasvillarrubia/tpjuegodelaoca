@@ -5,6 +5,9 @@
 global inicializar_juego
 extern inicializar_zorro
 
+section .data
+    zorro_comio_suficientes_ocas db 0   
+    zorro_ocas_capturadas db 0
 
 section .bss
     zorro_fila resd 1
