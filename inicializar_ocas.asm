@@ -8,13 +8,8 @@ global inicializar_ocas
 %define MAX_COLUMNAS 7
 
 
-
-section .bss
-    movimientos_validos         times 3 resb 1
-
-
 section .text
- 
+
 
 ; asumo que el vector de ocas es una variable? los movimientos_validos tambien? (por ahora los recibo por parametro)
 ; (rdi, rsi, rdx)
@@ -24,15 +19,15 @@ inicializar_ocas:
     call    inicializar_movimientos_validos
     mov     rax, rdi; dejo el puntero al inicio del vector en rax
     mov     byte[rdx], 0
-    mov     rbx, 0          ; rbx va a ser i = 0
+    mov     rbx, 1          ; rbx va a ser i = 1
 
     primer_loop:
-        mov     rcx, 0          ; rcx va a ser j = 0
-        cmp     rbx, MAX_FILAS  ; mientras rbx sea menor a 7 continua
-        jge     cerrar_primer_loop
+        mov     rcx, 1          ; rcx va a ser j = 1
+        cmp     rbx, MAX_FILAS  ; mientras rbx sea menor igual a 7 continua
+        jg     cerrar_primer_loop
         segundo_loop:
-            cmp     rcx, MAX_COLUMNAS    ; mientras rcx sea menor a 7 continua
-            jge     cerrar_segundo_loop
+            cmp     rcx, MAX_COLUMNAS    ; mientras rcx sea menor igual a 7 continua
+            jg     cerrar_segundo_loop
             jmp     comprobar_condiciones_de_inicializacion
         avanzar_segundo_loop:
             inc     rcx
@@ -56,29 +51,29 @@ inicializar_ocas:
         ret
 
     comprobar_condiciones_de_inicializacion:
-        cmp rbx, 2      ; si la oca esta en la fila 3 la agrego
+        cmp rbx, 3      ; si la oca esta en la fila 3 la agrego
         je agregar_a_vector_de_ocas
 
-        cmp rcx, 1
+        cmp rcx, 2
         jle segunda_condicion_de_inicializacion
-        cmp rcx, 5
+        cmp rcx, 6
         jge segunda_condicion_de_inicializacion
 
-        cmp rbx, 0      ; si la oca esta entre la columna 1 y 5 (sin incluir) y en la fila 1 la agrego
+        cmp rbx, 1      ; si la oca esta entre la columna 2 y 6 (sin incluir) y en la fila 1 la agrego
         je agregar_a_vector_de_ocas
-        cmp rbx, 1      ; si la oca esta entre la columna 1 y 5 (sin incluir) y en la fila 2 la agrego
+        cmp rbx, 2      ; si la oca esta entre la columna 2 y 6 (sin incluir) y en la fila 2 la agrego
         je agregar_a_vector_de_ocas
 
     segunda_condicion_de_inicializacion:
-        cmp rcx, 0      ; si la oca esta en la columna 1 compruebo la siguiente condicion
+        cmp rcx, 1      ; si la oca esta en la columna 1 compruebo la siguiente condicion
         je tercera_condicion_de_inicializacion
-        cmp rcx, 6      ; si la oca esta en la columna 7 compruebo la siguiente condicion
+        cmp rcx, 7      ; si la oca esta en la columna 7 compruebo la siguiente condicion
         jne no_cumple_ninguna_condicion
 
     tercera_condicion_de_inicializacion:
-        cmp rbx, 3      ; si la oca esta en la fila 3 la agrego
-        je agregar_a_vector_de_ocas
         cmp rbx, 4      ; si la oca esta en la fila 4 la agrego
+        je agregar_a_vector_de_ocas
+        cmp rbx, 5      ; si la oca esta en la fila 5 la agrego
         je agregar_a_vector_de_ocas
 
     no_cumple_ninguna_condicion:

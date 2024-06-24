@@ -1,13 +1,11 @@
 global mover_oca
 
-extern comprobar_posiciones_iguales
 extern buscar_indice_de_oca
 
 section .data
 
 
 section .bss
-    movimientos_validos         times 3 resb 1
     fila_a_comparar             resb 1
     columna_a_comparar          resb 1
     auxiliar_fila               resb 1
@@ -15,10 +13,9 @@ section .bss
 
 section .text
 
-; FUNCION PRINCIPAL
-; el indice de oca tiene en cuenta que el vector tiene 2 valores por oca? yo lo tome como que si
-; (rdi, rsi, rdx, rcx, r8, r9)
-; (vector_de_ocas: rdi, movimiento: sil, zorro_fila: dl, zorro_columna: cl,  indice_de_oca: r8, tope_ocas: r9)  
+; el indice de oca tiene en cuenta que el vector tiene 2 valores
+; (rdi, rsi, rdx, rcx, r8, r9, r10)
+; (vector_de_ocas: rdi, movimiento: sil, zorro_fila: dl, zorro_columna: cl,  indice_de_oca: r8, tope_ocas: r9, movimientos_validos: r10)  
 ; post: si se pudo mover la oca entonces devuelve 1 en rax, sino devuelve -1.
 mover_oca:
     call    comprobar_movimiento_valido
@@ -51,11 +48,11 @@ mover_oca:
     ret
 
     comprobar_movimiento_valido:
-        cmp     sil, [movimientos_validos]
+        cmp     sil, [r10]
         je      mover_izquierda
-        cmp     sil, [movimientos_validos + 1]
+        cmp     sil, [r10 + 1]
         je      mover_abajo
-        cmp     sil, [movimientos_validos + 2]
+        cmp     sil, [r10 + 2]
         je      mover_derecha
         mov     rax, -1
         ret
@@ -90,26 +87,26 @@ mover_oca:
 
     ; uso auxiliar_fila y auxiliar_columna
     esta_dentro_de_tablero:
-        cmp     byte[auxiliar_fila], 0 ;fila_elemento tiene que ser >= 0
+        cmp     byte[auxiliar_fila], 1 ;fila_elemento tiene que ser >= 1
         jl      elemento_fuera_del_tablero
-        cmp     byte[auxiliar_fila], 6 ;fila_elemento tiene que ser <= 6
+        cmp     byte[auxiliar_fila], 7 ;fila_elemento tiene que ser <= 7
         jg      elemento_fuera_del_tablero
-        cmp     byte[auxiliar_columna], 0 ;columna_elemento tiene que ser >= 0
+        cmp     byte[auxiliar_columna], 1 ;columna_elemento tiene que ser >= 1
         jl      elemento_fuera_del_tablero
-        cmp     byte[auxiliar_columna], 6 ;columna_elemento tiene que ser <= 6
+        cmp     byte[auxiliar_columna], 7 ;columna_elemento tiene que ser <= 7
         jg      elemento_fuera_del_tablero
 
-        cmp     byte[auxiliar_fila], 2 ;si fila_elemento es < 2 compruebo la otra condicion
+        cmp     byte[auxiliar_fila], 3 ;si fila_elemento es < 3 compruebo la otra condicion
         jl      comprobar_columna_valida
-        cmp     byte[auxiliar_fila], 4 ;si fila_elemento es > 4 compruebo la otra condicion
+        cmp     byte[auxiliar_fila], 5 ;si fila_elemento es > 5 compruebo la otra condicion
         jg      comprobar_columna_valida
         jmp     elemento_dentro_del_tablero ;si paso las demas comprobaciones entonces esta dentro del tablero
 
 
         comprobar_columna_valida:
-        cmp     byte[auxiliar_columna], 2 ;si columna_elemento es < 2 entonces no esta en el tablero
+        cmp     byte[auxiliar_columna], 3 ;si columna_elemento es < 3 entonces no esta en el tablero
         jl      elemento_fuera_del_tablero
-        cmp     byte[auxiliar_columna], 4 ;si columna_elemento es > 4 entonces no esta en el tablero
+        cmp     byte[auxiliar_columna], 5 ;si columna_elemento es > 5 entonces no esta en el tablero
         jg      elemento_fuera_del_tablero
         jmp     elemento_dentro_del_tablero ;si paso las demas comprobaciones entonces esta dentro del tablero
 
@@ -124,3 +121,18 @@ mover_oca:
     no_se_puede_mover_la_oca:
         mov     rax, -1 ;con rax -1 digo que la oca no se pudo mover
         ret
+
+
+; pre: auxiliar_fila, auxiliar_columna, fila_a_comparar y columna_a_comparar tienen que estar inicializados
+comprobar_posiciones_iguales:
+    mov     dl, [auxiliar_fila]
+    cmp     dl, [fila_a_comparar]
+    jne     posiciones_distintas
+    mov     dl, [auxiliar_columna]
+    cmp     dl, [columna_a_comparar]
+    jne     posiciones_distintas
+    mov     rax, 1 ; 1 representa que las posiciones son iguales
+    ret
+posiciones_distintas:
+    mov     rax, -1 ; -1 representa que las posiciones no son iguales
+    ret

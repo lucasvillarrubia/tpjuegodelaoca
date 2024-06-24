@@ -1,14 +1,12 @@
 global buscar_indice_de_oca
-extern comprobar_posiciones_iguales
-
 
 
 section .bss
     auxiliar_fila               resb 1
     auxiliar_columna            resb 1
-    tope_ocas                   resb 1
     fila_a_comparar             resb 1
     columna_a_comparar          resb 1
+    tope_ocas                   resb 1
 
 section .text
 
@@ -40,4 +38,20 @@ buscar_indice_de_oca:
         ret ;  en rax devuelvo el indice del elemento buscado teniendo en cuenta que el vector tiene 2 elementos por oca
 
     oca_no_encontrada:
+        mov     rax, -1
         ret ; asumo que donde me llamen voy a usar el rax -1 para decir que no encontre la oca
+
+
+; pre: auxiliar_fila, auxiliar_columna, fila_a_comparar y columna_a_comparar tienen que estar inicializados
+comprobar_posiciones_iguales:
+    mov     dl, [auxiliar_fila]
+    cmp     dl, [fila_a_comparar]
+    jne     posiciones_distintas
+    mov     dl, [auxiliar_columna]
+    cmp     dl, [columna_a_comparar]
+    jne     posiciones_distintas
+    mov     rax, 1 ; 1 representa que las posiciones son iguales
+    ret
+posiciones_distintas:
+    mov     rax, -1 ; -1 representa que las posiciones no son iguales
+    ret
