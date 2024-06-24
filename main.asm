@@ -117,18 +117,15 @@ inicializar:
     mov rsi, [zorro_fila]
     mov rdx, [zorro_columna]
     mPrintf
-    jmp pedir_movimiento
-
 loop_juego:
-    ; pa que no haga loop infinito
-    jmp terminar_juego
     ;sub rsp, 8
     ;call definir_matriz ;aca llamariamos a una funcion que pregunte que tablero quiera?
     ;add rsp, 8
     sub rsp, 8
     call imprimir_tablero
     add rsp, 8
-
+    
+    jmp pedir_movimiento
     ; ...después de un movimiento
     cmp dword [estado_juego], 0
     jg victoria_zorro
@@ -192,14 +189,14 @@ movimiento_exitoso:
     lea rdi, [rel mensaje_exito]
     mPrintf
     ;jmp terminar_turno
-    jmp pedir_movimiento
+    jmp loop_juego
 error:
     mov [captura_reciente], edi
     lea rdi, [rel mensaje_error]
     mPrintf
     cmp dword [captura_reciente], 0
     jl imprimir_viveza
-    jmp pedir_movimiento
+    jmp loop_juego
 imprimir_captura:
     lea rdi, [rel mensaje_captura]
     mPrintf
@@ -216,7 +213,7 @@ imprimir_captura:
     jl perdiste
 
 
-    jmp pedir_movimiento
+    jmp loop_juego
 imprimir_viveza:
     lea rdi, [rel mensaje_vivo]
     mPrintf
