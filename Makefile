@@ -6,12 +6,14 @@ GCCFLAGS=-no-pie -z noexecstack
 
 all: juego.out
 
+
 juego.out: main.o capturar.o inicializar_zorro.o mover_zorro.o verificar_estado_juego.o inicializar_juego.o imprimir_tablero.o inicializar_ocas.o buscar_oca.o eliminar_oca.o mover_oca.o 
 	$(GCC) main.o capturar.o inicializar_zorro.o mover_zorro.o verificar_estado_juego.o inicializar_juego.o imprimir_tablero.o inicializar_ocas.o buscar_oca.o eliminar_oca.o mover_oca.o  -o juego.out $(GCCFLAGS)
 
 
 main.o: main.asm
 	$(NASM) $(NASMFLAGS) -o main.o main.asm
+
 
 inicializar_ocas.o: inicializar_ocas.asm
 	$(NASM) $(NASMFLAGS) -o inicializar_ocas.o inicializar_ocas.asm
@@ -46,3 +48,4 @@ imprimir_tablero.o: imprimir_tablero.asm
 
 clean:
 	rm -f *.o *.lst juego.out
+

@@ -1,3 +1,4 @@
+
 ;contantes para oca
 %define CANT_OCAS 17
 %define TAMAÑO_OCA 2
@@ -10,9 +11,6 @@
 ;contantes para zorro
 %define ZORRO_FIL_INICIAL 3
 %define ZORRO_COL_INICIAL 4
-
-
-;   MINI CLI PARA PROBAR MOVIMIENTOS DE ZORRO
 
 
 %macro mPrintf 0
@@ -41,21 +39,20 @@
 %endmacro
 
 
+;parte imprimir terreno y zorro
 extern printf
 extern scanf
 extern getchar
 extern system
 extern mover_zorro
 extern verificar_estado_juego
-global main
 
-
-global  main
-
+;parte de ocas
 extern inicializar_ocas
 extern buscar_indice_de_oca
 extern mover_oca
 extern eliminar_oca
+global main
 
 section .data
     zorro_ocas_capturadas dd 0          ;
@@ -205,6 +202,7 @@ perdiste:
     lea rdi, [rel aviso_derrota]
     mPrintf
     ret
+
 
 nueva_parte_ocas:
     lea     rdi, [vector_ocas]
