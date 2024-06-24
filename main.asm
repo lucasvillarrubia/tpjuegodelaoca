@@ -1,8 +1,16 @@
+
+;contantes para oca
+%define CANT_OCAS 17
+%define TAMAÑO_OCA 2
+%define ARRIBA 'W'
+%define IZQUIERDA 'A'
+%define ABAJO 'S'
+%define DERECHA 'D'
+
+
+;contantes para zorro
 %define ZORRO_FIL_INICIAL 3
 %define ZORRO_COL_INICIAL 4
-
-
-;   MINI CLI PARA PROBAR MOVIMIENTOS DE ZORRO
 
 
 %macro mPrintf 0
@@ -31,14 +39,20 @@
 %endmacro
 
 
+;parte imprimir terreno y zorro
 extern printf
 extern scanf
 extern getchar
 extern system
 extern mover_zorro
 extern verificar_estado_juego
-global main
 
+;parte de ocas
+extern inicializar_ocas
+extern buscar_indice_de_oca
+extern mover_oca
+extern eliminar_oca
+global main
 
 section .data
     zorro_ocas_capturadas dd 0          ;
@@ -63,13 +77,19 @@ section .data
     mensaje_salida db "saliste querido", 10, 0
     aviso_victoria db "somos campeones", 10, 0
     aviso_derrota db "era por abajo", 10, 0
-    
-    
+
+
 section .bss
+    ;seccion ocas
+    vector_ocas                 times CANT_OCAS resb TAMAÑO_OCA
+    tope_ocas                   resb 1
+    movimientos_validos         times 3 resb 1
+    ;seccion zorro
     zorro_fila resd 1
     zorro_columna resd 1
     movimiento resb 1
     string_basura resb 50
+
 
 section .text
 main:
@@ -183,3 +203,32 @@ perdiste:
     mPrintf
     ret
 
+
+nueva_parte_ocas:
+    lea     rdi, [vector_ocas]
+    lea     rsi, [movimientos_validos] ; uso un vector de movimientos para saber cual es el valido, talvez pueda servir mas
+                                       ; cuando rotemos la matriz y las ocas tengan un movimiento no disponible
+    lea     rdx, [tope_ocas]
+    call    inicializar_ocas
+
+    lea     rdi, [vector_ocas]
+    mov     sil, [tope_ocas]
+    mov     dl, 3 ; auxiliar_fila
+    mov     cl, 6 ; auxiliar_columna
+    call    buscar_indice_de_oca
+    lea     rdi, [vector_ocas]
+    mov     sil, ABAJO ; direccion de movimiento
+    mov     dl, 5 ; fila del zorro
+    mov     cl, 4 ; columna del zorro
+    mov     r8, 18 ; indice de la oca (tiene en cuenta que hay 2 elementos por oca) (oca numero 9)
+    mov     r9, [tope_ocas] ; tope del vector
+    lea     r10, [movimientos_validos]
+    call    mover_oca
+    lea     rdi, [vector_ocas]
+    mov     sil, [tope_ocas]
+    mov     dl, 3
+    mov     cl, 3
+    call    eliminar_oca
+
+ret
+    
