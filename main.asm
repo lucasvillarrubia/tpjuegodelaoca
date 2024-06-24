@@ -97,9 +97,7 @@ section .bss
 
 section .text
 main:
-    sub rsp, 8
-    call imprimir_tablero 
-    add rsp, 8
+
 
     sub rsp, 8
     call inicializar_juego
@@ -110,17 +108,28 @@ main:
     mov byte [zorro_comio_suficientes_ocas], cl
     mov byte [es_turno_del_zorro], ch
 
+
+    ;mov edi, [zorro_fila]
+    ;mov esi, [zorro_columna]
+    ;sub rsp, 8
+    ;call imprimir_tablero 
+    ;add rsp, 8
+
+
 inicializar:
-    mov dword [zorro_fila], ZORRO_FIL_INICIAL
-    mov dword [zorro_columna], ZORRO_COL_INICIAL
-    mov rdi, print_start
-    mov rsi, [zorro_fila]
-    mov rdx, [zorro_columna]
-    mPrintf
+    ;mov dword [zorro_fila], ZORRO_FIL_INICIAL
+    ;mov dword [zorro_columna], ZORRO_COL_INICIAL
+    ;mov rdi, print_start
+    ;mov rsi, [zorro_fila]
+    ;mov rdx, [zorro_columna]
+    ;mPrintf
 loop_juego:
     ;sub rsp, 8
     ;call definir_matriz ;aca llamariamos a una funcion que pregunte que tablero quiera?
     ;add rsp, 8
+
+    mov edi, dword [zorro_fila]
+    mov esi, dword [zorro_columna]
     sub rsp, 8
     call imprimir_tablero
     add rsp, 8
@@ -131,6 +140,8 @@ loop_juego:
     jg victoria_zorro
     jl victoria_ocas
     je loop_juego
+
+
 imprimir_posicion:
     ; COMPLETAR PRINT DE ZORRO CON: OCAS_CAPTURADAS
     mov rdi, print_posicion
@@ -138,6 +149,8 @@ imprimir_posicion:
     mov rdx, [zorro_columna]
     mov rcx, [zorro_ocas_capturadas]
     ret
+
+
 pedir_movimiento:
 
     ;limpiarConsola

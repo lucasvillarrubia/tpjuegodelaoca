@@ -33,19 +33,25 @@ section .data
     ;format_elemento db "%2d ", 0   ; Formato para imprimir cada elemento de la matriz
     format_newline db 10, 10, 10, 0        ; Carácter de nueva línea para imprimir al final de cada fila
     ;format_space db "   ", 0       ; Espacio para rellenar en la parte superior e inferior de la matriz
-    un_par_de_espacios db 32, 32, 32, 0
+    un_par_de_espacios db 32, 32, 32, 32, 32, 0
 
 section .bss
     matriz         times MAX_CASILLEROS             resb 1
     casillero                                       resw 1
+    caracter                                        resb 1
     pos_fila                                        resd 1
     pos_columna                                     resd 1
+    zorrito_fila                                    resd 1
+    zorrito_columna                                 resd 1
 
 
 section .text
     
 imprimir_tablero:
 
+
+    mov dword [zorrito_fila], edi
+    mov dword [zorrito_columna], esi
     call llenar_matriz
     call imprimir_tablero_nuevo
     ret
@@ -69,10 +75,18 @@ rellenar_casillero:
 
 
 buscar_contenido_casillero:
+    mov word [casillero], 0
     ; ESTÁ EL ZORRO AHÍ?
-    cmp dword [pos_columna], 3
+    ; qcy uso el rdx (????
+    mov r8, 0
+    mov r8d, dword [zorrito_fila]
+    cmp dword [pos_fila], r8d
+    ;cmp dword [pos_fila], 3
     jne rellenar_casillero_vacio
-    cmp dword [pos_fila], 4
+    mov r9, 0
+    mov r9d, dword [zorrito_columna]
+    cmp dword [pos_columna], r9d
+    ;cmp dword [pos_columna], 4
     je rellenar_zorro
     ; HAY UNA OCA AHÍ?
     ; falta llamada a hay_una_oca

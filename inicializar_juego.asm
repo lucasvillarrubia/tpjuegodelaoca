@@ -29,4 +29,10 @@ inicializar_juego:
     mov dword [zorro_ocas_capturadas], edx
     mov byte [zorro_comio_suficientes_ocas], cl
     mov byte [es_turno_del_zorro], ch
+
+    mov edi, [zorro_fila]
+    mov esi, [zorro_columna]
+    mov edx, [zorro_ocas_capturadas]
+    mov cl, [zorro_comio_suficientes_ocas]
+    mov ch, [es_turno_del_zorro]
     ret
