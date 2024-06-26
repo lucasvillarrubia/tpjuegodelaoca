@@ -43,8 +43,8 @@ inicializar_zorro:
 inicializar:
     mov dword [zorro_fila], ZORRO_FIL_INICIAL
     mov dword [zorro_columna], ZORRO_COL_INICIAL
-    call imprimir_posicion
-    mPrintf
+    ;call imprimir_posicion
+    ;mPrintf
     mov edi, [zorro_fila]
     mov esi, [zorro_columna]
     mov edx, [zorro_ocas_capturadas]

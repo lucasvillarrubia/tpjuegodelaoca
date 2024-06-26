@@ -77,17 +77,19 @@ rellenar_casillero:
 buscar_contenido_casillero:
     mov word [casillero], 0
     ; ESTÁ EL ZORRO AHÍ?
-    ; qcy uso el rdx (????
-    mov r8, 0
-    mov r8d, dword [zorrito_fila]
-    cmp dword [pos_fila], r8d
-    ;cmp dword [pos_fila], 3
-    jne rellenar_casillero_vacio
     mov r9, 0
     mov r9d, dword [zorrito_columna]
     cmp dword [pos_columna], r9d
-    ;cmp dword [pos_columna], 4
+    ;cmp dword [pos_columna], 3
+
+    jne seguir_buscando
+
+    mov r8, 0
+    mov r8d, dword [zorrito_fila]
+    cmp dword [pos_fila], r8d
+    ;cmp dword [pos_fila], 4
     je rellenar_zorro
+    seguir_buscando:
     ; HAY UNA OCA AHÍ?
     ; falta llamada a hay_una_oca
     mov rax, 1
@@ -95,9 +97,10 @@ buscar_contenido_casillero:
     je rellenar_oca
     ; ESTÁ DENTRO DEL TABLERO?
     ; falta llamada a esta_dentro_rango
-    mov rax, 1
+    call esta_dentro_tablero
+    ;mov rax, 1
     cmp rax, 0
-    je rellenar_fuera_de_tablero
+    jne rellenar_fuera_de_tablero
     ; CASO DEFAULT: CASILLERO VACÍO
     jmp rellenar_casillero_vacio
 rellenar_zorro:
@@ -122,7 +125,8 @@ ubicar_en_matriz:
     mov rbx, 0
     mov rbx, matriz
     mov rdx, 0
-    inc dword [puntero_matriz]
+    ;inc dword [puntero_matriz]
+    add dword [puntero_matriz], 1
     mov edx, [pos_fila]
     dec edx
     imul edx, [long_fila]
@@ -130,7 +134,7 @@ ubicar_en_matriz:
     add eax, edx
     mov edx, [pos_columna]
     dec edx
-    imul edx, [long_elemento]
+    imul edx, 1
     add eax, edx
     add rbx, rax
     ret
@@ -146,10 +150,12 @@ avanzar_posicion:
 avanzar_columna:
     cmp dword [pos_columna], MAX_COLUMNAS
     jge avanzar_fila
-    inc dword [pos_columna]
+    ;inc dword [pos_columna]
+    add dword [pos_columna], 1
     ret
 avanzar_fila:
-    inc dword [pos_fila]
+    ;inc dword [pos_fila]
+    add dword [pos_fila], 1
     mov dword [pos_columna], 1
     ret
 
@@ -190,4 +196,30 @@ imprimir_casillero:
     ;loop imprimir_casillero
     cmp dword [puntero_matriz], MAX_CASILLEROS
     jl imprimir_casillero
+    ret
+
+
+esta_dentro_tablero:
+    mov rax, 0
+    cmp dword [pos_fila], 1
+    jl fuera_de_rango
+    cmp dword [pos_fila], MAX_FILAS
+    jg fuera_de_rango
+    cmp dword [pos_columna], 1
+    jl fuera_de_rango
+    cmp dword [pos_columna], MAX_COLUMNAS
+    jg fuera_de_rango
+    cmp dword [pos_columna], 3
+    jl chequear_esquinas
+    cmp dword [pos_columna], 5
+    jg chequear_esquinas
+    ret
+chequear_esquinas:
+    cmp dword [pos_fila], 3
+    jl fuera_de_rango
+    cmp dword [pos_fila], 5
+    jg fuera_de_rango
+    ret
+fuera_de_rango:
+    mov rax, 1
     ret

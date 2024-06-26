@@ -128,8 +128,8 @@ loop_juego:
     ;call definir_matriz ;aca llamariamos a una funcion que pregunte que tablero quiera?
     ;add rsp, 8
 
-    mov edi, dword [zorro_fila]
-    mov esi, dword [zorro_columna]
+    mov edi, [zorro_fila]
+    mov esi, [zorro_columna]
     sub rsp, 8
     call imprimir_tablero
     add rsp, 8
@@ -153,8 +153,7 @@ imprimir_posicion:
 
 pedir_movimiento:
 
-    ;limpiarConsola
-    ; ACÁ SE LIMPIARÍA LA TERMINAL
+    
 
     call imprimir_posicion
     mPrintf
@@ -168,6 +167,8 @@ descartar_sobra_input:
     cmp rax, 10
     jne descartar_sobra_input
 mover:
+    limpiarConsola
+    ; ACÁ SE LIMPIARÍA LA TERMINAL
     mov dil, [movimiento]
     mov esi, [zorro_fila]
     mov edx, [zorro_columna]
@@ -183,6 +184,8 @@ movimiento_exitoso:
     mov [zorro_fila], edi
     mov [zorro_columna], esi
     mov [captura_reciente], edx
+    
+
     ; chequeo si el zorro acaba de comer
     cmp dword [captura_reciente], 0
     jne imprimir_captura
@@ -204,6 +207,8 @@ movimiento_exitoso:
     ;jmp terminar_turno
     jmp loop_juego
 error:
+    ;limpiarConsola
+    ; ACÁ SE LIMPIARÍA LA TERMINAL
     mov [captura_reciente], edi
     lea rdi, [rel mensaje_error]
     mPrintf
