@@ -38,6 +38,6 @@ nasm -f elf64 -g -F dwarf -l inicializar_juego.lst -o inicializar_juego.o inicia
 nasm -f elf64 -g -F dwarf -l imprimir_tablero.lst -o imprimir_tablero.o imprimir_tablero.asm 
 
 
-gcc main.o imprimir_tablero.o  -o juego.out -no-pie  -z noexecstack
+ gcc main.o inicializar_juego.o imprimir_tablero.o  -o juego.out -no-pie  -z noexecstack
 
 COMANDO COPADO: layout regs
