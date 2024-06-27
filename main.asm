@@ -1,14 +1,4 @@
 
-;contantes para oca
-%define CANT_OCAS 17
-%define TAMAÑO_OCA 2
-%define ARRIBA 'W'
-%define IZQUIERDA 'A'
-%define ABAJO 'S'
-%define DERECHA 'D'
-
-
-;contantes para zorro
 %define ZORRO_FIL_INICIAL 3
 %define ZORRO_COL_INICIAL 4
 
@@ -48,13 +38,14 @@ extern system
 extern mover_zorro
 extern verificar_estado_juego
 
-extern inicializar_zorro
+extern inicializar_juego
+extern imprimir_tablero
 
 ;parte de ocas
-extern inicializar_ocas
-extern buscar_indice_de_oca
-extern mover_oca
-extern eliminar_oca
+;extern inicializar_ocas
+;extern buscar_indice_de_oca
+;extern mover_oca
+;extern eliminar_oca
 
 
 global main
@@ -110,9 +101,9 @@ section .bss
     columna_zorro               resd 1
     ocas_capturadas             resd 1
     zorro_ocas_capturadas_memoria       resb 1 ;;IMPORTANTE CAMBIE NOMBRE POR QUE FLAG ME DECIA QUE HABIA CONFLICTOOOO
-    vector_ocas                 times CANT_OCAS resb TAMAÑO_OCA
-    tope_ocas                   resb 1
-    movimientos_validos         times 3 resb 1
+    ;vector_ocas                 times CANT_OCAS resb TAMAÑO_OCA
+    ;tope_ocas                   resb 1
+    ;movimientos_validos         times 3 resb 1
     
     ;seccion zorro
     zorro_fila resd 1
@@ -141,19 +132,19 @@ main:
     ;call imprimir_tablero 
     ;add rsp, 8
 
-mover_personajes:
-    lea     rdi, [fila_zorro]
-    lea     rsi, [columna_zorro]
-    lea     rdx, [ocas_capturadas]
-    mov     rcx, IZQUIERDA ; LA ORIENTACION PEDIDA ESTA HARDCODEADA, ESTO ME LO DEBERIAN PASAR
-    lea     r8, [zorro_ocas_capturadas]
-    call    inicializar_zorro
-    lea     rdi, [vector_ocas]
-    lea     rsi, [movimientos_validos] ; uso un vector de movimientos para saber cual es el valido, talvez pueda servir mas
-                                       ; cuando rotemos la matriz y las ocas tengan un movimiento no disponible
-    lea     rdx, [tope_ocas]
-    mov     rcx, IZQUIERDA ; LA ORIENTACION PEDIDA ESTA HARDCODEADA, ESTO ME LO DEBERIAN PASAR
-    call    inicializar_ocas
+;mover_personajes:
+;    lea     rdi, [fila_zorro]
+;    lea     rsi, [columna_zorro]
+;    lea     rdx, [ocas_capturadas]
+;    mov     rcx, IZQUIERDA ; LA ORIENTACION PEDIDA ESTA HARDCODEADA, ESTO ME LO DEBERIAN PASAR
+;    lea     r8, [zorro_ocas_capturadas]
+;    call    inicializar_zorro
+;    lea     rdi, [vector_ocas]
+;    lea     rsi, [movimientos_validos] ; uso un vector de movimientos para saber cual es el valido, talvez pueda servir mas
+;                                       ; cuando rotemos la matriz y las ocas tengan un movimiento no disponible
+;    lea     rdx, [tope_ocas]
+;    mov     rcx, IZQUIERDA ; LA ORIENTACION PEDIDA ESTA HARDCODEADA, ESTO ME LO DEBERIAN PASAR
+;    call    inicializar_ocas
 inicializar:
     ;mov dword [zorro_fila], ZORRO_FIL_INICIAL
     ;mov dword [zorro_columna], ZORRO_COL_INICIAL

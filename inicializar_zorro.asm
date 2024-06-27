@@ -17,6 +17,9 @@
 
 %define OCAS_CAPTURADAS_INICIALMENTE 0
 
+%define ZORRO_FIL_INICIAL 3
+%define ZORRO_COL_INICIAL 4
+
 ;
 ; Pre:
 ; (rdi, rsi, rdx, rcx, r8)
@@ -41,6 +44,7 @@ global inicializar_zorro
 
 
 section .data
+    zorro_ocas_capturadas dd 0
     zorro_comio_suficientes_ocas db 0           ;   } datos lógica zorro para devolver
     es_turno_del_zorro db 1                     ;       <----     no sé si es correcto que esto del turno esté acá pero así lo había codeado en C (?
     print_posicion db "El zorro está en la fila %i y en la columna %i. Comió %i ocas", 10, 0
@@ -55,12 +59,23 @@ section .text
 inicializar_zorro:
 inicializar:
 
-    call posicionar_zorro_segun_orientacion
+    mov dword [zorro_fila], ZORRO_FIL_INICIAL
+    mov dword [zorro_columna], ZORRO_COL_INICIAL
+
+    ;all posicionar_zorro_segun_orientacion
     ; call imprimir_posicion
     ; mPrintf
-    mov dword[r8], OCAS_CAPTURADAS_INICIALMENTE
-    mov cl, [zorro_comio_suficientes_ocas] ; que hacen estas lineas?
-    mov ch, [es_turno_del_zorro] ; que hacen estas lineas?
+    ;mov dword[r8], OCAS_CAPTURADAS_INICIALMENTE
+    ;mov cl, [zorro_comio_suficientes_ocas] ; que hacen estas lineas?
+    ;mov ch, [es_turno_del_zorro] ; que hacen estas lineas?
+
+    mov edi, dword [zorro_fila]
+    mov esi, dword [zorro_columna]
+    mov edx, dword [zorro_ocas_capturadas]
+    mov cl, byte [zorro_comio_suficientes_ocas]
+    mov ch, byte [es_turno_del_zorro]
+
+
     ret
 
 ; imprimir_posicion:
