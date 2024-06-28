@@ -124,8 +124,6 @@ section .bss
 
 section .text
 main:
-
-
     sub rsp, 8
     call inicializar_juego
     add rsp, 8
@@ -279,6 +277,7 @@ imprimir_viveza:
 terminar_turno:
     ret
 salir:
+    ;guardar partida actual
     lea rdi, [rel mensaje_salida]
     mPrintf
     ret
