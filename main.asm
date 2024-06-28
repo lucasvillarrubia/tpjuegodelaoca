@@ -90,6 +90,7 @@ section .data
     mensaje_victoria_zorro db "Ganó el zorrooooo"
     mensaje_victoria_ocas db "Ganaron las ocasssss"               ;
 
+    contadores_zorro times 8 dd 0
 
 section .bss
     gano_zorro resb 1
@@ -202,6 +203,7 @@ mover:
     mov esi, [zorro_fila]
     mov edx, [zorro_columna]
     mov ecx, [captura_reciente]
+    mov r8, contadores_zorro
     sub rsp, 8
     call mover_zorro
     add rsp, 8
@@ -291,6 +293,15 @@ victoria_ocas:
     jmp terminar_juego
 
 terminar_juego:
+    
+    mov rbx, 0
+
+    imprimir_contadores:
+        mov rdi, [contadores_zorro + rbx]
+        mPrintf
+        add rbx, 4
+        cmp rbx, 32
+        jne imprimir_contadores
     ret
 
 

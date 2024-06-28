@@ -131,24 +131,28 @@ mov_izquierda:
     call esta_dentro_tablero
     cmp rax, 0
     jne termina_fuera_de_limites
+    inc [r8]
     jmp exito
 mov_derecha:
     inc dword [columna]
     call esta_dentro_tablero
     cmp rax, 0
     jne termina_fuera_de_limites
+    inc [r8 + 4]
     jmp exito
 mov_arriba:
     dec dword [fila]
     call esta_dentro_tablero
     cmp rax, 0
     jne termina_fuera_de_limites
+    inc [r8 + 8]
     jmp exito
 mov_abajo:
     inc dword [fila]
     call esta_dentro_tablero
     cmp rax, 0
     jne termina_fuera_de_limites
+    inc [r8 + 12]
     jmp exito
 mov_arriba_izquierda:
     dec dword [fila]
@@ -156,6 +160,7 @@ mov_arriba_izquierda:
     call esta_dentro_tablero
     cmp rax, 0
     jne termina_fuera_de_limites
+    inc [r8 + 16]
     jmp exito
 mov_arriba_derecha:
     dec dword [fila]
@@ -163,6 +168,7 @@ mov_arriba_derecha:
     call esta_dentro_tablero
     cmp rax, 0
     jne termina_fuera_de_limites
+    inc [r8 + 20]
     jmp exito
 mov_abajo_izquierda:
     inc dword [fila]
@@ -170,6 +176,7 @@ mov_abajo_izquierda:
     call esta_dentro_tablero
     cmp rax, 0
     jne termina_fuera_de_limites
+    inc [r8 + 24]
     jmp exito
 mov_abajo_derecha:
     inc dword [fila]
@@ -177,6 +184,7 @@ mov_abajo_derecha:
     call esta_dentro_tablero
     cmp rax, 0
     jne termina_fuera_de_limites
+    inc [r8 + 28]
     jmp exito
 
 
