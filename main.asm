@@ -91,6 +91,7 @@ section .data
     mensaje_victoria_ocas db "Ganaron las ocasssss"               ;
 
     contadores_zorro times 8 dd 0
+    formato_numero db "%i", 10, 0
 
 section .bss
     gano_zorro resb 1
@@ -276,19 +277,20 @@ salir:
 ganaste:
     lea rdi, [rel aviso_victoria]
     mPrintf
-    ret
+    jmp terminar_juego
+    ;ret
 perdiste:
     lea rdi, [rel aviso_derrota]
     mPrintf
     ret
 
 victoria_zorro:
-    mov rdi, mensaje_victoria_ocas
+    mov rdi, mensaje_victoria_zorro
     mPrintf
     jmp terminar_juego
 
 victoria_ocas:
-    mov rdi, mensaje_victoria_zorro
+    mov rdi, mensaje_victoria_ocas
     mPrintf
     jmp terminar_juego
 
@@ -297,7 +299,8 @@ terminar_juego:
     mov rbx, 0
 
     imprimir_contadores:
-        mov rdi, [contadores_zorro + rbx]
+        mov rdi, formato_numero
+        mov rsi, [contadores_zorro + rbx]
         mPrintf
         add rbx, 4
         cmp rbx, 32
