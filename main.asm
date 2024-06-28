@@ -92,6 +92,14 @@ section .data
 
     contadores_zorro times 8 dd 0
     formato_numero db "%i", 10, 0
+    est_derecha db "Los movimientos realizados a la derecha fueron: %i", 10, 0
+    est_izquierda db "Los movimientos realizados a la izquierda fueron: %i", 10, 0
+    est_abajo db "Los movimientos realizados a abajo fueron: %i", 10, 0
+    est_arriba db "Los movimientos realizados a arriba fueron: %i", 10, 0
+    est_ab_der db "Los movimientos realizados a abajo a la derecha fueron: %i", 10, 0
+    est_ab_izq db "Los movimientos realizados a abajo a la izquierda fueron: %i", 10, 0
+    est_arr_der db "Los movimientos realizados a arriba a la derecha fueron: %i", 10, 0
+    est_arr_izq db "Los movimientos realizados a arriba a la iquierda fueron: %i", 10, 0
 
 section .bss
     gano_zorro resb 1
@@ -296,15 +304,46 @@ victoria_ocas:
 
 terminar_juego:
     
-    mov rbx, 0
+    ;mov rbx, 0
 
-    imprimir_contadores:
-        mov rdi, formato_numero
-        mov rsi, [contadores_zorro + rbx]
+    ;imprimir_contadores:
+
+    imprimir_izquierda: 
+        mov rdi, est_izquierda
+        mov rsi, [contadores_zorro]
         mPrintf
-        add rbx, 4
-        cmp rbx, 32
-        jne imprimir_contadores
+    imprimir_derecha:
+        mov rdi, est_derecha
+        mov rsi, [contadores_zorro + 4]
+        mPrintf
+    imprimir_arriba:
+        mov rdi, est_arriba
+        mov rsi, [contadores_zorro + 8]
+        mPrintf
+    imprimir_abajo:
+        mov rdi, est_abajo
+        mov rsi, [contadores_zorro + 12]
+        mPrintf
+    imprimir_arr_izq:
+        mov rdi, est_arr_izq
+        mov rsi, [contadores_zorro + 16]
+        mPrintf
+    imprimir_arr_der:
+        mov rdi, est_arr_der
+        mov rsi, [contadores_zorro + 20]
+        mPrintf
+    imprimir_ab_izq:
+        mov rdi, est_ab_izq
+        mov rsi, [contadores_zorro + 24]
+        mPrintf
+    imprimir_ab_der:
+        mov rdi, est_ab_der
+        mov rsi, [contadores_zorro + 28]
+        mPrintf
+        ;add rbx, 4
+        ;cmp rbx, 32
+            
+        ;jne imprimir_contadores
     ret
 
 
