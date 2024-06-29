@@ -1,4 +1,9 @@
-
+%define ARRIBA 'W'
+%define IZQUIERDA 'A'
+%define ABAJO 'S'
+%define DERECHA 'D'
+%define CANT_OCAS 17
+%define TAMAÑO_OCA 2
 
 %macro mPrintf 0
     sub     rsp,8
@@ -100,12 +105,18 @@ section .data
 section .bss
     gano_zorro resb 1
     es_turno_del_zorro resb 1
-    
+    orientacion                 resb 1
+
     ;seccion zorro
     zorro_fila resd 1
     zorro_columna resd 1
     movimiento resb 1
     string_basura resb 50
+
+    ;seccion ocas
+    vector_ocas                 times CANT_OCAS resb TAMAÑO_OCA
+    tope_ocas                   resb 1
+    movimientos_validos         times 3 resb 1
 
 
 section .text
@@ -115,14 +126,23 @@ main:
 
 inicializar:
 
+    mov byte[orientacion], ARRIBA
+    lea rdi, [vector_ocas]
+    lea rsi, [movimientos_validos]
+    lea rdx, [tope_ocas]
+    mov cl,  [orientacion] ; es una letra W, A, X o D
+    ; todo esto que puse son punteros a las variables q tenemos aca en main, las modifico en inicializar_ocas
     sub rsp, 8
     call inicializar_juego
     add rsp, 8
+    
     mov dword [zorro_fila], edi
     mov dword [zorro_columna], esi
     mov dword [zorro_ocas_capturadas], edx
     mov byte [zorro_comio_suficientes_ocas], cl
     mov byte [es_turno_del_zorro], ch
+
+
     ;HAY QUE VER Como traemos la info de oca aca
 
 loop_juego:
@@ -132,9 +152,10 @@ loop_juego:
 
     mov rdi, instruccionesO
     mPrintf
-
     mov edi, [zorro_fila]
     mov esi, [zorro_columna]
+    lea rdx, [vector_ocas] ; le paso el puntero al vector de ocas
+    mov cl,  [tope_ocas]
     sub rsp, 8
     call imprimir_tablero
     add rsp, 8

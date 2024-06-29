@@ -9,7 +9,7 @@
     add     rsp,8
 %endmacro
 
-
+extern buscar_indice_de_oca
 extern printf
 global main
 global imprimir_tablero
@@ -44,6 +44,9 @@ section .bss
     zorrito_fila                                    resd 1
     zorrito_columna                                 resd 1
 
+    mi_puntero_vector_ocas                          resq 1
+    mi_tope_ocas                                    resb 1
+
 
 section .text
     
@@ -52,6 +55,8 @@ imprimir_tablero:
 
     mov dword [zorrito_fila], edi
     mov dword [zorrito_columna], esi
+    mov [mi_puntero_vector_ocas], rdx
+    mov [mi_tope_ocas], cl
     call llenar_matriz
     call imprimir_tablero_nuevo
     ret
@@ -92,9 +97,24 @@ buscar_contenido_casillero:
     seguir_buscando:
     ; HAY UNA OCA AHÍ?
     ; falta llamada a hay_una_oca
-    mov rax, 1
+    ; mov cl, [rdi]
+    ; mov cl, [rdi + 1]
+
+    mov rdi, [mi_puntero_vector_ocas]
+    mov sil, [mi_tope_ocas]
+    mov eax, [pos_fila]
+    cdqe
+    mov dl, al
+    mov eax, [pos_columna]
+    cdqe
+    mov cl, al
+    call buscar_indice_de_oca
+
+
+
+    ; mov rax, 0
     cmp rax, 0
-    je rellenar_oca
+    jge rellenar_oca
     ; ESTÁ DENTRO DEL TABLERO?
     ; falta llamada a esta_dentro_rango
     call esta_dentro_tablero

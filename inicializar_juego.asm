@@ -33,17 +33,25 @@ section .bss
     id_archivo resq 1
 
     ;seccion ocas
-    fila_zorro                  resd 1
-    columna_zorro               resd 1
-    zorro_ocas_capturadas_memoria       resb 1 
-    vector_ocas                 times CANT_OCAS resb TAMAÑO_OCA
-    tope_ocas                   resb 1
-    movimientos_validos         times 3 resb 1
+    fila_zorro                      resd 1
+    columna_zorro                   resd 1
+    zorro_ocas_capturadas_memoria   resb 1 
+
+    mi_puntero_vector_ocas                  resq 1
+    mi_puntero_movimientos_validos          resq 1
+    mi_puntero_tope_ocas                    resq 1
+    mi_copia_orientacion                    resb 1
 
 
 section .text
+
+; (rdi, rsi, rdx, rcx)
+; pre: (vector_ocas: rdi, movimientos_validos: rsi, tope_ocas: rdx, orientacion: cl)
 inicializar_juego:
-    
+    mov [mi_puntero_vector_ocas], rdi
+    mov [mi_puntero_movimientos_validos], rsi
+    mov [mi_puntero_tope_ocas], rdx
+    mov [mi_copia_orientacion], cl
     ;si hay archivo con partida guardada: usarla. sin darle opcion a los jugadores pues DICTADURA
     ;mov rdi, nombre_archivo
     ;mov rsi, modo
@@ -61,14 +69,22 @@ inicializar_sin_partida_guardada:
     ;add rsp, 8
     ;
 
-    lea     rdi, [vector_ocas]
-    lea     rsi, [movimientos_validos] ; uso un vector de movimientos para saber cual es el valido, talvez pueda servir mas
+    mov     rdi, [mi_puntero_vector_ocas]
+    lea     rsi, [mi_puntero_movimientos_validos] ; uso un vector de movimientos para saber cual es el valido, talvez pueda servir mas
                                        ; cuando rotemos la matriz y las ocas tengan un movimiento no disponible
-    lea     rdx, [tope_ocas]
-    mov     rcx, IZQUIERDA ; LA ORIENTACION PEDIDA ESTA HARDCODEADA, ESTO ME LO DEBERIAN PASAR
+    mov     rdx, [mi_puntero_tope_ocas]
+    mov     rcx, ARRIBA ; LA ORIENTACION PEDIDA ESTA HARDCODEADA, ESTO ME LO DEBERIAN PASAR
     call    inicializar_ocas
+    ; mov     rdi, [mi_puntero_tope_ocas]
+    ; mov     cl, [rdi]
+    ; mov     cl, [mi_puntero_tope_ocas]
+    ; mov     rdi, [mi_puntero_vector_ocas]
 
-    
+    ; mov     cl, [rdi]
+    ; mov     cl, [rdi + 1]
+
+
+
     sub rsp, 8
     call inicializar_zorro
     add rsp, 8
