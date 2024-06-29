@@ -211,6 +211,7 @@ mover:
     mov edx, [zorro_columna]
     mov ecx, [captura_reciente]
     mov r8, contadores_zorro
+    mov r10, 0
     sub rsp, 8
     call mover_zorro
     add rsp, 8
