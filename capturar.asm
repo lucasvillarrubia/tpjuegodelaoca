@@ -155,7 +155,7 @@ exito:
     ;add rsp, 8
     ; HAY UNA OCA EN LA CASILLA A MOVER? SÍ    ---->    NO PUEDE CAPTURAR, FIGURA COMO MOVIMIENTO INVÁLIDO, SIGUE SIENDO TURNO DEL ZORRO
     ;mov rax, 0
-
+   
     ; HAY UNA OCA EN LA CASILLA A MOVER? NO    ---->    CAPTURAAAAA
     mov rax, 1
 
