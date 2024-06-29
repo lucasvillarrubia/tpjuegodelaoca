@@ -1,3 +1,5 @@
+
+
 %macro mPrintf 0
     sub     rsp,8
     call    printf
@@ -36,10 +38,9 @@ extern inicializar_juego
 extern imprimir_tablero
 
 ;parte de ocas
-;extern inicializar_ocas
-;extern buscar_indice_de_oca
-;extern mover_oca
-;extern eliminar_oca
+extern buscar_indice_de_oca
+extern mover_oca
+extern eliminar_oca
 
 
 global main
@@ -100,16 +101,6 @@ section .bss
     gano_zorro resb 1
     es_turno_del_zorro resb 1
     
-    
-    ;seccion ocas
-    fila_zorro                  resd 1
-    columna_zorro               resd 1
-    ocas_capturadas             resd 1
-    zorro_ocas_capturadas_memoria       resb 1 
-    ;vector_ocas                 times CANT_OCAS resb TAMAÑO_OCA
-    ;tope_ocas                   resb 1
-    ;movimientos_validos         times 3 resb 1
-    
     ;seccion zorro
     zorro_fila resd 1
     zorro_columna resd 1
@@ -123,6 +114,7 @@ main:
     mPrintf
 
 inicializar:
+
     sub rsp, 8
     call inicializar_juego
     add rsp, 8
@@ -131,26 +123,9 @@ inicializar:
     mov dword [zorro_ocas_capturadas], edx
     mov byte [zorro_comio_suficientes_ocas], cl
     mov byte [es_turno_del_zorro], ch
-
-;mover_personajes:
-;    lea     rdi, [fila_zorro]
-;    lea     rsi, [columna_zorro]
-;    lea     rdx, [ocas_capturadas]
-;    mov     rcx, IZQUIERDA ; LA ORIENTACION PEDIDA ESTA HARDCODEADA, ESTO ME LO DEBERIAN PASAR
-;    lea     r8, [zorro_ocas_capturadas]
-;    call    inicializar_zorro
-;    lea     rdi, [vector_ocas]
-;    lea     rsi, [movimientos_validos] ; uso un vector de movimientos para saber cual es el valido, talvez pueda servir mas
-;                                       ; cuando rotemos la matriz y las ocas tengan un movimiento no disponible
-;    lea     rdx, [tope_ocas]
-;    mov     rcx, IZQUIERDA ; LA ORIENTACION PEDIDA ESTA HARDCODEADA, ESTO ME LO DEBERIAN PASAR
-;    call    inicializar_ocas
-
+    ;HAY QUE VER Como traemos la info de oca aca
 
 loop_juego:
-    ;sub rsp, 8
-    ;call definir_matriz ;aca llamariamos a una funcion que pregunte que tablero quiera?
-    ;add rsp, 8
 
     mov rdi, instruccionesZ
     mPrintf
@@ -196,7 +171,6 @@ descartar_sobra_input:
     jne descartar_sobra_input
 mover:
     limpiarConsola
-    ; ACÁ SE LIMPIARÍA LA TERMINAL
     mov dil, [movimiento]
     mov esi, [zorro_fila]
     mov edx, [zorro_columna]
@@ -236,8 +210,7 @@ movimiento_exitoso:
     ;jmp terminar_turno
     jmp loop_juego
 error:
-    ;limpiarConsola
-    ; ACÁ SE LIMPIARÍA LA TERMINAL
+    limpiarConsola ;limpiarConsola
     mov [captura_reciente], edi
     lea rdi, [rel mensaje_error]
     mPrintf
@@ -296,7 +269,7 @@ terminar_juego:
     
     ;mov rbx, 0
 
-    ;imprimir_contadores:
+imprimir_contadores:
 
     imprimir_izquierda: 
         mov rdi, est_izquierda
