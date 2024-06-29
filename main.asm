@@ -211,7 +211,10 @@ mover:
     mov edx, [zorro_columna]
     mov ecx, [captura_reciente]
     mov r8, contadores_zorro
+
+    ;  la única manera que pensé para que mover_zorro distinga entre un movimiento real y uno que no modifique la posición (?
     mov r10, 0
+    
     sub rsp, 8
     call mover_zorro
     add rsp, 8

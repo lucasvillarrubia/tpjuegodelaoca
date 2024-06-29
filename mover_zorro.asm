@@ -273,7 +273,7 @@ exito:
     cmp rax, 0
     jne termina_sin_capturar
 
-    ; falso movimiento
+    ; falso movimiento no modifica la posición
     cmp r10, 0
     jne salida
 
@@ -286,7 +286,8 @@ exito:
     mov edx, [captura_reciente]
     ret
 ubicar_zorro:
-    ; falso movimiento
+
+    ; falso movimiento no modifica la posición
     cmp r10, 0
     jne salida
 
