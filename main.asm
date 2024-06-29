@@ -47,6 +47,8 @@ extern buscar_indice_de_oca
 extern mover_oca
 extern eliminar_oca
 
+extern preguntar_orientacion
+
 
 global main
 
@@ -57,7 +59,9 @@ section .data
     print_start db "El zorro comienza en la fila %i y en la columna %i y está ayunado", 10, 0
     print_posicion db "El zorro está en la fila %i y en la columna %i. Comió %i ocas", 10, 0
     mensaje_movimiento db "che, dame un movimiento:", 10, 0
+    mensaje_indice db "ingrese las coordenadas de la oca que quiere mover:", 10, 0
     formato_movimiento db " %c", 0
+    formato_coordenada db " %i%i", 0
     captura_reciente dd 0
     cmd_clear db "clear", 0
     mensaje_error db "bueno: metiste cualquiera, o una letra que no sirve, o saliste del tablero, o no comiste nada", 10, 0
@@ -99,6 +103,9 @@ section .data
 
     instruccionesO db 10, "Aclaraciones de las ocas : ", 10, \
         "Ingrese por pantalla la coordenada de la oca que desea mover y luego realize su movimiento", 10,10, 10, 0
+
+    turno_oca db 10, "Ahora es el turno de las ocas ", 10
+    turno_zorro db 10, "Es el turno del zorro ", 10
        
 
 
@@ -114,9 +121,12 @@ section .bss
     string_basura resb 50
 
     ;seccion ocas
+    auxiliar_fila               resb 1
+    auxiliar_columna            resb 1
     vector_ocas                 times CANT_OCAS resb TAMAÑO_OCA
     tope_ocas                   resb 1
     movimientos_validos         times 3 resb 1
+    indice_de_oca               resb 1
 
 
 section .text
@@ -125,13 +135,15 @@ main:
     mPrintf
 
 inicializar:
+    sub rsp, 8
+    call preguntar_orientacion
+    add rsp, 8
 
-    mov byte[orientacion], ARRIBA
+    mov [orientacion], rax
     lea rdi, [vector_ocas]
     lea rsi, [movimientos_validos]
     lea rdx, [tope_ocas]
     mov cl,  [orientacion] ; es una letra W, A, X o D
-    ; todo esto que puse son punteros a las variables q tenemos aca en main, las modifico en inicializar_ocas
     sub rsp, 8
     call inicializar_juego
     add rsp, 8
@@ -142,9 +154,6 @@ inicializar:
     mov byte [zorro_comio_suficientes_ocas], cl
     mov byte [es_turno_del_zorro], ch
 
-
-    ;HAY QUE VER Como traemos la info de oca aca
-
 loop_juego:
 
     mov rdi, instruccionesZ
@@ -152,6 +161,11 @@ loop_juego:
 
     mov rdi, instruccionesO
     mPrintf
+
+loop_zorro:
+    mov rdi, turno_zorro
+    mPrintf
+
     mov edi, [zorro_fila]
     mov esi, [zorro_columna]
     lea rdx, [vector_ocas] ; le paso el puntero al vector de ocas
@@ -159,10 +173,26 @@ loop_juego:
     sub rsp, 8
     call imprimir_tablero
     add rsp, 8
-    
-    jmp pedir_movimiento
 
-   
+    jmp pedir_movimientoZ
+
+
+loop_oca:
+    limpiarConsola
+    mov rdi, turno_oca
+    mPrintf
+
+    mov edi, [zorro_fila]
+    mov esi, [zorro_columna]
+    lea rdx, [vector_ocas] ; le paso el puntero al vector de ocas
+    mov cl,  [tope_ocas]
+    sub rsp, 8
+    call imprimir_tablero
+    add rsp, 8
+
+    jmp pedir_indice
+
+chequear_estado:
     cmp dword [estado_juego], 0
     jg victoria_zorro
     jl victoria_ocas
@@ -178,7 +208,7 @@ imprimir_posicion:
     ret
 
 
-pedir_movimiento:
+pedir_movimientoZ:
     call imprimir_posicion
     mPrintf
     lea rdi, [rel mensaje_movimiento]
@@ -190,8 +220,8 @@ descartar_sobra_input:
     mGetchar
     cmp rax, 10
     jne descartar_sobra_input
-mover:
-    limpiarConsola
+moverZ:
+    ;limpiarConsola
     mov dil, [movimiento]
     mov esi, [zorro_fila]
     mov edx, [zorro_columna]
@@ -208,6 +238,8 @@ mover:
     jg error
     jl salir
     jmp movimiento_exitoso
+
+
 movimiento_exitoso:
     mov [zorro_fila], edi
     mov [zorro_columna], esi
@@ -216,7 +248,7 @@ movimiento_exitoso:
 
     ; chequeo si el zorro acaba de comer
     cmp dword [captura_reciente], 0
-    jne imprimir_captura
+    jne imprimir_captura_zorro
 
 
     mov edi, [zorro_ocas_capturadas]
@@ -232,8 +264,56 @@ movimiento_exitoso:
 
     lea rdi, [rel mensaje_exito]
     mPrintf
-    ;jmp terminar_turno
+    jmp loop_oca
+
+pedir_indice:
+    lea rdi, [rel mensaje_indice]
+    mPrintf
+    mov rdi, formato_coordenada
+    mov rsi, auxiliar_fila 
+    mov rdx, auxiliar_columna
+    mScanf
+ 
+    mov rdi, [vector_ocas]
+    mov r8,  [tope_ocas]
+    mov dl,  [auxiliar_fila]
+    mov cl,  [auxiliar_columna]
+    call buscar_indice_de_oca
+    mov [indice_de_oca] , rax
+
+pedir_movimientoO:
+    lea rdi, [rel mensaje_movimiento]
+    mPrintf
+    mov rdi, formato_movimiento
+    mov rsi, movimiento
+    mScanf
+descartar_sobra_input_oca:
+    mGetchar
+    cmp rax, 10
+    jne descartar_sobra_input_oca
+
+moverO:
+    mov sil, [movimiento]
+    mov rdi, [vector_ocas]
+    mov dl, [zorro_fila]
+    mov cl, [zorro_columna]
+    mov r8, [indice_de_oca]
+    mov r8, [tope_ocas]
+    mov r10, [movimientos_validos]
+
+    sub rsp, 8
+    call mover_oca
+    add rsp, 8
+    cmp rax, 0
+    jg error
+    jl salir
+    jmp pedir_movimientoO
+
+
+movimiento_exitoso_oca:
     jmp loop_juego
+
+
 error:
     limpiarConsola ;limpiarConsola
     mov [captura_reciente], edi
@@ -242,7 +322,8 @@ error:
     cmp dword [captura_reciente], 0
     jl imprimir_viveza
     jmp loop_juego
-imprimir_captura:
+
+imprimir_captura_zorro:
     lea rdi, [rel mensaje_captura]
     mPrintf
     inc dword [zorro_ocas_capturadas]
@@ -256,9 +337,9 @@ imprimir_captura:
     cmp rax, 0
     jg ganaste
     jl perdiste
+    jmp loop_oca
 
 
-    jmp loop_juego
 imprimir_viveza:
     lea rdi, [rel mensaje_vivo]
     mPrintf
