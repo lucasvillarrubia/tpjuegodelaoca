@@ -31,7 +31,7 @@ eliminar_oca:
         mov     dl, [rdi + rbx + 2] ; agarro la proxima fila
         mov     [rdi + rbx], dl ; la pongo en la fila del actual
         mov     cl, [rdi + rbx + 3] ; agarro la proxima columna
-        mov     [rdi + rbx + 1], dl ; la pongo en la columna del actual
+        mov     [rdi + rbx + 1], cl ; la pongo en la columna del actual
         add     rbx, 2
         jmp     loop_eliminar_oca
     terminar_loop_eliminar_oca:

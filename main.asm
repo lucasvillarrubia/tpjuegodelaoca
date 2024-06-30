@@ -336,7 +336,7 @@ error:
     mPrintf
     cmp dword [captura_reciente], 0
     jl imprimir_viveza
-    jmp loop_juego
+    jmp loop_oca
 
 imprimir_captura_zorro:
     lea rdi, [rel mensaje_captura]
