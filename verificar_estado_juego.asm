@@ -216,9 +216,12 @@ chequear_si_hay_oca:
     add rsp, 8
     ; si no hay ninguna oca en las contiguas: se puede mover --> NO PIERDE
     cmp rax, -1
-    je aqui_no_paso_nada_caballeros
+    je no_hay_oca
     ;hay una oca en esa contigua
     mov rax, -1
+    ret
+no_hay_oca:
+    mov rax, 0
     ret
     
 
