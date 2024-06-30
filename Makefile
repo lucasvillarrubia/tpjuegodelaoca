@@ -7,8 +7,8 @@ GCCFLAGS=-no-pie -z noexecstack -g
 all: juego.out
 
 
-juego.out: main.o preguntar_indice.o preguntar_orientacion.o capturar.o inicializar_zorro.o mover_zorro.o verificar_estado_juego.o inicializar_juego.o imprimir_tablero.o inicializar_ocas.o buscar_oca.o eliminar_oca.o mover_oca.o definir_matriz.o
-	$(GCC) preguntar_indice.o preguntar_orientacion.o capturar.o inicializar_zorro.o mover_zorro.o verificar_estado_juego.o inicializar_juego.o imprimir_tablero.o inicializar_ocas.o buscar_oca.o eliminar_oca.o mover_oca.o definir_matriz.o main.o -o juego.out $(GCCFLAGS)
+juego.out: manejo_archivos.o preguntar_indice.o preguntar_orientacion.o capturar.o inicializar_zorro.o mover_zorro.o verificar_estado_juego.o inicializar_juego.o imprimir_tablero.o inicializar_ocas.o buscar_oca.o eliminar_oca.o mover_oca.o definir_matriz.o  main.o
+	$(GCC) manejo_archivos.o preguntar_indice.o preguntar_orientacion.o capturar.o inicializar_zorro.o mover_zorro.o verificar_estado_juego.o inicializar_juego.o imprimir_tablero.o inicializar_ocas.o buscar_oca.o eliminar_oca.o mover_oca.o definir_matriz.o  main.o -o juego.out $(GCCFLAGS)
 
 
 
@@ -54,6 +54,9 @@ preguntar_orientacion.o : preguntar_orientacion.asm
 preguntar_indice.o: preguntar_indice.asm
 	$(NASM) $(NASMFLAGS) -o preguntar_indice.o preguntar_indice.asm
 
+manejo_archivos.o :manejo_archivos.asm
+	$(NASM) $(NASMFLAGS) -o manejo_archivos.o manejo_archivos.asm
+
 clean:
-	rm -f *.o *.lst juego.out
+	rm -f *.o *.lst *.dat juego.out
 

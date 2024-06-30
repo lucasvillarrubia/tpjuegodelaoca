@@ -12,6 +12,8 @@
 
 
 global inicializar_juego
+
+global inicializar_sin_partida_guardada
 extern inicializar_zorro
 
 ;parte de ocas
@@ -53,15 +55,6 @@ inicializar_juego:
     mov [mi_puntero_movimientos_validos], rsi
     mov [mi_puntero_tope_ocas], rdx
     mov [mi_copia_orientacion], cl
-    ;si hay archivo con partida guardada: usarla. sin darle opcion a los jugadores pues DICTADURA
-    ;mov rdi, nombre_archivo
-    ;mov rsi, modo
-    ;call fopen
-
-    ;cmp rax, 0
-    ;jle inicializar_sin_partida_guardada
-    ;mov rax, qword[id_archivo]
-    ;leer partida guardada
 
 inicializar_sin_partida_guardada:
     
