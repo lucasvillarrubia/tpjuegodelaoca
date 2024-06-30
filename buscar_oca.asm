@@ -17,6 +17,7 @@ section .text
 ; post: devuelvo el indice de la oca en el vector, teniendo en cuenta que son 2 
 ;       elementos por oca, ej: oca Nro 9 devuelve indice 18.
 buscar_indice_de_oca:
+
     mov     [auxiliar_fila], dl
     mov     [auxiliar_columna], cl
     mov     [tope_ocas], sil

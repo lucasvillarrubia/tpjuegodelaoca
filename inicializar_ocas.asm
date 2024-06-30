@@ -2,7 +2,7 @@ global inicializar_ocas
 
 %define ARRIBA 'W'
 %define IZQUIERDA 'A'
-%define ABAJO 'S'
+%define ABAJO 'X'
 %define DERECHA 'D'
 %define MAX_FILAS 7
 %define MAX_COLUMNAS 7
@@ -12,7 +12,7 @@ section .bss
 
 section .text
 
-; Asumo que el vector de ocas es una variable? los movimientos_validos tambien? (por ahora los recibo por parametro).
+; Asumo que el vector de ocas es una variable? 
 ; orientacion es: W, A, X o D. La orientacion default es W.
 ; (rdi, rsi, rdx, rcx)
 ; (vector_ocas: rdi, movimientos_validos: rsi, tope_ocas: rdx, orientacion: cl)

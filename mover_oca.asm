@@ -15,7 +15,7 @@ section .text
 
 ; el indice de oca tiene en cuenta que el vector tiene 2 valores
 ; (rdi, rsi, rdx, rcx, r8, r9, r10)
-; (vector_de_ocas: rdi, movimiento: sil, zorro_fila: dl, zorro_columna: cl,  indice_de_oca: r8, tope_ocas: r9, movimientos_validos: r10)  
+; (vector_de_ocas: rdi, movimiento: sil, zorro_fila: dl, zorro_columna: cl,  indice_de_oca: r8, tope_ocas: r9b, movimientos_validos: r10)  
 ; post: si se pudo mover la oca entonces devuelve 1 en rax, sino devuelve -1.
 mover_oca:
     call    comprobar_movimiento_valido
@@ -48,13 +48,13 @@ mover_oca:
     ret
 
     comprobar_movimiento_valido:
-        cmp     sil, [r10]
+        cmp     sil, byte[r10]
         je      mover_izquierda
-        cmp     sil, [r10 + 1]
+        cmp     sil, byte[r10 + 1]
         je      mover_abajo
-        cmp     sil, [r10 + 2]
+        cmp     sil, byte[r10 + 2]
         je      mover_derecha
-        cmp     sil, [r10 + 3]
+        cmp     sil, byte[r10 + 3]
         je      mover_arriba
         mov     rax, -1
         ret

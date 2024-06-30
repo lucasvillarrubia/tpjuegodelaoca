@@ -17,6 +17,9 @@
 
 %define OCAS_CAPTURADAS_INICIALMENTE 0
 
+%define ZORRO_FIL_INICIAL 3
+%define ZORRO_COL_INICIAL 4
+
 ;
 ; Pre:
 ; (rdi, rsi, rdx, rcx, r8)
@@ -41,6 +44,7 @@ global inicializar_zorro
 
 
 section .data
+    zorro_ocas_capturadas dd 0
     zorro_comio_suficientes_ocas db 0           ;   } datos lógica zorro para devolver
     es_turno_del_zorro db 1                     ;       <----     no sé si es correcto que esto del turno esté acá pero así lo había codeado en C (?
     print_posicion db "El zorro está en la fila %i y en la columna %i. Comió %i ocas", 10, 0
@@ -49,19 +53,31 @@ section .data
 section .bss
     zorro_fila resd 1
     zorro_columna resd 1
+    orientacion_zorro resb 1
 
 
 section .text
 inicializar_zorro:
 inicializar:
 
-    call posicionar_zorro_segun_orientacion
+    ;mov dword [zorro_fila], ZORRO_FIL_INICIAL
+    ;mov dword [zorro_columna], ZORRO_COL_INICIAL
+
+    ;all posicionar_zorro_segun_orientacion
     ; call imprimir_posicion
     ; mPrintf
-    mov dword[r8], OCAS_CAPTURADAS_INICIALMENTE
-    mov cl, [zorro_comio_suficientes_ocas] ; que hacen estas lineas?
-    mov ch, [es_turno_del_zorro] ; que hacen estas lineas?
-    ret
+    ;mov dword[r8], OCAS_CAPTURADAS_INICIALMENTE
+    ;mov cl, [zorro_comio_suficientes_ocas] ; que hacen estas lineas?
+    ;mov ch, [es_turno_del_zorro] ; que hacen estas lineas?
+
+    ;mov edi, dword [zorro_fila]
+    ;mov esi, dword [zorro_columna]
+    ;mov edx, dword [zorro_ocas_capturadas]
+    ;mov cl, byte [zorro_comio_suficientes_ocas]
+    ;mov ch, byte [es_turno_del_zorro]
+
+
+    ;ret
 
 ; imprimir_posicion:
 ;     mov eax, [rdi]
@@ -74,6 +90,9 @@ inicializar:
 ;     mov rcx, byte[r8]
 ;     ret
 
+    mov [orientacion_zorro], cl
+
+
 posicionar_zorro_segun_orientacion:
     cmp     cl, ABAJO
     je      ubicar_zorro_para_tablero_hacia_abajo
@@ -84,21 +103,30 @@ posicionar_zorro_segun_orientacion:
     jmp     ubicar_zorro_para_tablero_hacia_arriba
 
 ubicar_zorro_para_tablero_hacia_arriba:
-    mov dword[rdi], ZORRO_FIL_INICIAL_ARRIBA
-    mov dword[rsi], ZORRO_COL_INICIAL_ARRIBA
-    ret
+    mov dword [zorro_fila], ZORRO_FIL_INICIAL_ARRIBA
+    mov dword [zorro_columna], ZORRO_COL_INICIAL_ARRIBA
+    jmp devolver_cosas_zorro
 
 ubicar_zorro_para_tablero_hacia_abajo:
-    mov dword[rdi], ZORRO_FIL_INICIAL_ABAJO
-    mov dword[rsi], ZORRO_COL_INICIAL_ABAJO
-    ret
+    mov dword [zorro_fila], ZORRO_FIL_INICIAL_ABAJO
+    mov dword [zorro_columna], ZORRO_COL_INICIAL_ABAJO
+    jmp devolver_cosas_zorro
 
 ubicar_zorro_para_tablero_hacia_izquierda:
-    mov dword[rdi], ZORRO_FIL_INICIAL_IZQUIERDA
-    mov dword[rsi], ZORRO_COL_INICIAL_IZQUIERDA
-    ret
+    mov dword [zorro_fila], ZORRO_FIL_INICIAL_IZQUIERDA
+    mov dword[zorro_columna], ZORRO_COL_INICIAL_IZQUIERDA
+    jmp devolver_cosas_zorro
 ubicar_zorro_para_tablero_hacia_derecha:
-    mov dword[rdi], ZORRO_FIL_INICIAL_DERECHA
-    mov dword[rsi], ZORRO_COL_INICIAL_DERECHA
+    mov dword [zorro_fila], ZORRO_FIL_INICIAL_DERECHA
+    mov dword [zorro_columna], ZORRO_COL_INICIAL_DERECHA
+    jmp devolver_cosas_zorro
+
+devolver_cosas_zorro:
+    mov edi, dword [zorro_fila]
+    mov esi, dword [zorro_columna]
+    mov edx, dword [zorro_ocas_capturadas]
+    mov cl, byte [zorro_comio_suficientes_ocas]
+    mov ch, byte [es_turno_del_zorro]
+
     ret
 

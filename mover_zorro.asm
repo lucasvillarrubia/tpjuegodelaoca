@@ -47,9 +47,10 @@
 
 
 global mover_zorro
-extern hay_una_oca
+extern buscar_indice_de_oca
 extern capturar
 extern printf
+extern eliminar_oca
 
 
 section .data
@@ -61,16 +62,25 @@ section .data
 
 section .bss
     movimiento resb 1
-    fila resd 1
-    columna resd 1
+    fila_anterior resd 1
+    columna_anterior resd 1
+    fila_siguiente   resd 1
+    columna_siguiente resd 1
     captura_reciente resd 1
+    mov_falso resq 1
+    ;ocasss
+    otro_vector_ocas resq 1
+    otro_tope_ocas resq 1
 
 section .text
 mover_zorro:
     mov [movimiento], dil
-    mov [fila], esi
-    mov [columna], edx
+    mov [fila_anterior], esi
+    mov [columna_anterior], edx
     mov [captura_reciente], ecx
+    mov [otro_vector_ocas], r11 ; le paso el puntero al vector de ocas
+    mov [otro_tope_ocas], rbx
+    mov [mov_falso], r10
 
 
 movimiento_es_letra:
@@ -103,9 +113,9 @@ es_movimiento_valido:
     je mov_arriba
     cmp byte [movimiento], 119 ;w
     je mov_arriba
-    cmp byte [movimiento], 83 ;S
+    cmp byte [movimiento], 88 ;X
     je mov_abajo
-    cmp byte [movimiento], 115 ;s
+    cmp byte [movimiento], 120 ;x
     je mov_abajo
     cmp byte [movimiento], 81 ;Q
     je mov_arriba_izquierda
@@ -119,86 +129,94 @@ es_movimiento_valido:
     je mov_abajo_izquierda
     cmp byte [movimiento], 122 ;z
     je mov_abajo_izquierda
-    cmp byte [movimiento], 88 ;X
+    cmp byte [movimiento], 67 ;C
     je mov_abajo_derecha
-    cmp byte [movimiento], 120 ;x
+    cmp byte [movimiento], 99 ;c
     je mov_abajo_derecha
     jmp error_movimiento
 
 
 mov_izquierda:
-    dec dword [columna]
+    dec dword [columna_anterior]
     call esta_dentro_tablero
     cmp rax, 0
     jne termina_fuera_de_limites
+    inc dword [r8]
     jmp exito
 mov_derecha:
-    inc dword [columna]
+    inc dword [columna_anterior]
     call esta_dentro_tablero
     cmp rax, 0
     jne termina_fuera_de_limites
+    inc dword [r8 + 4]
     jmp exito
 mov_arriba:
-    dec dword [fila]
+    dec dword [fila_anterior]
     call esta_dentro_tablero
     cmp rax, 0
     jne termina_fuera_de_limites
+    inc dword [r8 + 8]
     jmp exito
 mov_abajo:
-    inc dword [fila]
+    inc dword [fila_anterior]
     call esta_dentro_tablero
     cmp rax, 0
     jne termina_fuera_de_limites
+    inc dword [r8 + 12]
     jmp exito
 mov_arriba_izquierda:
-    dec dword [fila]
-    dec dword [columna]
+    dec dword [fila_anterior]
+    dec dword [columna_anterior]
     call esta_dentro_tablero
     cmp rax, 0
     jne termina_fuera_de_limites
+    inc dword [r8 + 16]
     jmp exito
 mov_arriba_derecha:
-    dec dword [fila]
-    inc dword [columna]
+    dec dword [fila_anterior]
+    inc dword [columna_anterior]
     call esta_dentro_tablero
     cmp rax, 0
     jne termina_fuera_de_limites
+    inc dword [r8 + 20]
     jmp exito
 mov_abajo_izquierda:
-    inc dword [fila]
-    dec dword [columna]
+    inc dword [fila_anterior]
+    dec dword [columna_anterior]
     call esta_dentro_tablero
     cmp rax, 0
     jne termina_fuera_de_limites
+    inc dword [r8 + 24]
     jmp exito
 mov_abajo_derecha:
-    inc dword [fila]
-    inc dword [columna]
+    inc dword [fila_anterior]
+    inc dword [columna_anterior]
     call esta_dentro_tablero
     cmp rax, 0
     jne termina_fuera_de_limites
+    inc dword [r8 + 28]
     jmp exito
 
 
 esta_dentro_tablero:
     mov rax, 0
-    cmp dword [fila], 1
+    cmp dword [fila_anterior], 1
     jl fuera_de_rango
-    cmp dword [fila], MAX_FILAS
+    cmp dword [fila_anterior], MAX_FILAS
     jg fuera_de_rango
-    cmp dword [columna], 1
+    cmp dword [columna_anterior], 1
     jl fuera_de_rango
-    cmp dword [columna], MAX_COLUMNAS
+    cmp dword [columna_anterior], MAX_COLUMNAS
     jg fuera_de_rango
-    cmp dword [columna], 3
+    cmp dword [columna_anterior], 3
     jl chequear_esquinas
-    cmp dword [columna], 5
+    cmp dword [columna_anterior], 5
     jg chequear_esquinas
     ret
 chequear_esquinas:
-    cmp dword [fila], 3
+    cmp dword [fila_anterior], 3
     jl fuera_de_rango
-    cmp dword [fila], 5
+    cmp dword [fila_anterior], 5
     jg fuera_de_rango
     ret
 fuera_de_rango:
@@ -241,8 +259,8 @@ exito:
 
     ; argumentos para mandar a función "hay_una_oca"
     ;mov rdi, [movimiento]
-    ;mov rsi, [fila]
-    ;mov rdx, [columna]
+    ;mov rsi, [fila_anterior]
+    ;mov rdx, [columna_anterior]
     ;sub rsp, 8
     ;call hay_una_oca
     ;add rsp, 8
@@ -252,32 +270,74 @@ exito:
     ;mov rax, 0
 
     ; HAY UNA OCA EN LA CASILLA A MOVER? NO
-    mov rax, 1
+    ;mov rax, 1
 
-    cmp rax, 0
-    jne ubicar_zorro
+    mov rdi, [otro_vector_ocas]
+    mov rax, [otro_tope_ocas]
+    mov sil, [rax]
+    mov eax, [fila_anterior]
+    cdqe
+    mov dl, al
+    mov eax, [columna_anterior]
+    cdqe
+    mov cl, al
+    call buscar_indice_de_oca
+
+
+    cmp rax, -1
+    je ubicar_zorro
     mov dil, [movimiento]
-    mov esi, [fila]
-    mov edx, [columna]
+    mov esi, [fila_anterior]
+    mov edx, [columna_anterior]
+    mov r11, [otro_vector_ocas] ; le paso el puntero al vector de ocas
+    mov rax, [otro_tope_ocas]
+    mov bl,  [rax]
+    mov cl, byte [mov_falso]
     sub rsp, 8
     call capturar
     add rsp, 8
     cmp rax, 0
     jne termina_sin_capturar
-    mov [fila], edi
-    mov [columna], esi
+
+    ; falso movimiento no modifica la posición
+    cmp qword [mov_falso], 1
+    je salida
+
+
+    mov [fila_siguiente], edi
+    mov [columna_siguiente], esi
     mov dword [captura_reciente], 1
+
+
+    mov rdi, [otro_vector_ocas]
+    mov rsi, [otro_tope_ocas]
+    mov al, [rsi]
+    mov eax, [fila_anterior]
+    cdqe
+    mov dl, al
+    mov eax, [columna_anterior]
+    cdqe
+    mov cl, al
+    call eliminar_oca
+
+
     mov rax, 0
-    mov edi, [fila]
-    mov esi, [columna]
+    mov edi, [fila_siguiente]
+    mov esi, [columna_siguiente]
     mov edx, [captura_reciente]
     ret
 ubicar_zorro:
-    cmp dword [captura_reciente], 0
-    jne termina_haciendose_el_vivo_despues_de_comer
+
+    ; falso movimiento no modifica la posición
+    cmp qword [mov_falso], 1
+    je salida
+
+    cmp dword [captura_reciente], 1
+    je termina_haciendose_el_vivo_despues_de_comer
+    mov dword [captura_reciente], 0
     mov rax, 0
-    mov edi, [fila]
-    mov esi, [columna]
+    mov edi, [fila_anterior]
+    mov esi, [columna_anterior]
     mov edx, [captura_reciente]
     ret
 
