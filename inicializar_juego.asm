@@ -84,6 +84,7 @@ inicializar_sin_partida_guardada:
     ; mov     cl, [rdi + 1]
 
 
+    mov cl, [mi_copia_orientacion]
 
     sub rsp, 8
     call inicializar_zorro

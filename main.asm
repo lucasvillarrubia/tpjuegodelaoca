@@ -231,6 +231,8 @@ moverZ:
     ;  la única manera que pensé para que mover_zorro distinga entre un movimiento real y uno que no modifique la posición (?
     mov r10, 0
     
+    lea r11, [vector_ocas] ; le paso el puntero al vector de ocas
+    mov bl,  [tope_ocas]
     sub rsp, 8
     call mover_zorro
     add rsp, 8
@@ -251,15 +253,15 @@ movimiento_exitoso:
     jne imprimir_captura_zorro
 
 
-    mov edi, [zorro_ocas_capturadas]
-    mov esi, [zorro_fila]
-    mov edx, [zorro_columna]
-    sub rsp, 8
-    call verificar_estado_juego
-    add rsp, 8
-    cmp rax, 0
-    jg ganaste
-    jl perdiste
+    ;mov edi, [zorro_ocas_capturadas]
+    ;mov esi, [zorro_fila]
+    ;mov edx, [zorro_columna]
+    ;sub rsp, 8
+    ;call verificar_estado_juego
+    ;add rsp, 8
+    ;cmp rax, 0
+    ;jg ganaste
+    ;jl perdiste
 
 
     lea rdi, [rel mensaje_exito]
@@ -328,15 +330,15 @@ imprimir_captura_zorro:
     mPrintf
     inc dword [zorro_ocas_capturadas]
 
-    mov edi, [zorro_ocas_capturadas]
-    mov esi, [zorro_fila]
-    mov edx, [zorro_columna]
-    sub rsp, 8
-    call verificar_estado_juego
-    add rsp, 8
-    cmp rax, 0
-    jg ganaste
-    jl perdiste
+    ;mov edi, [zorro_ocas_capturadas]
+    ;mov esi, [zorro_fila]
+    ;mov edx, [zorro_columna]
+    ;sub rsp, 8
+    ;call verificar_estado_juego
+    ;add rsp, 8
+    ;cmp rax, 0
+    ;jg ganaste
+    ;jl perdiste
     jmp loop_oca
 
 

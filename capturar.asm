@@ -16,7 +16,7 @@
 ;
 
 global capturar
-
+extern buscar_indice_de_oca
 
 section .data
 
@@ -24,12 +24,17 @@ section .bss
     movimiento resb 1
     fila resd 1
     columna resd 1
+    ;ocass
+    ultimo_vector_ocas resq 1
+    ultimo_tope_ocas resb 1
 
 section .text
 capturar:
     mov [movimiento], dil
     mov [fila], esi
     mov [columna], edx
+    mov [ultimo_vector_ocas], r11 ; le paso el puntero al vector de ocas
+    mov [ultimo_tope_ocas], bl
 es_movimiento_valido:
     cmp byte [movimiento], 65 ;A
     je mov_izquierda
@@ -157,11 +162,25 @@ exito:
     ;mov rax, 0
    
     ; HAY UNA OCA EN LA CASILLA A MOVER? NO    ---->    CAPTURAAAAA
-    mov rax, 1
+    ;mov rax, 1
 
-    cmp rax, 0
-    je termina_sin_capturar
-    jmp ubicar_zorro
+    mov rdi, [ultimo_vector_ocas]
+    mov sil, [ultimo_tope_ocas]
+    mov eax, [fila]
+    cdqe
+    mov dl, al
+    mov eax, [columna]
+    cdqe
+    mov cl, al
+    call buscar_indice_de_oca
+
+
+    cmp rax, -1
+    je ubicar_zorro
+    jmp termina_sin_capturar
+    ;cmp rax, 0
+    ;je termina_sin_capturar
+    ;jmp ubicar_zorro
 ubicar_zorro:
     mov rax, 0
     mov edi, [fila]

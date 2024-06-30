@@ -47,7 +47,7 @@
 
 
 global mover_zorro
-extern hay_una_oca
+extern buscar_indice_de_oca
 extern capturar
 extern printf
 
@@ -64,6 +64,9 @@ section .bss
     fila resd 1
     columna resd 1
     captura_reciente resd 1
+    ;ocasss
+    otro_vector_ocas resq 1
+    otro_tope_ocas resb 1
 
 section .text
 mover_zorro:
@@ -71,6 +74,8 @@ mover_zorro:
     mov [fila], esi
     mov [columna], edx
     mov [captura_reciente], ecx
+    mov [otro_vector_ocas], r11 ; le paso el puntero al vector de ocas
+    mov [otro_tope_ocas], bl
 
 
 movimiento_es_letra:
@@ -257,16 +262,29 @@ exito:
     ; ______________________________________________
 
     ; HAY UNA OCA EN LA CASILLA A MOVER? SÍ
-    mov rax, 0
+    ;mov rax, 0
 
     ; HAY UNA OCA EN LA CASILLA A MOVER? NO
     ;mov rax, 1
 
-    cmp rax, 0
-    jne ubicar_zorro
+    mov rdi, [otro_vector_ocas]
+    mov sil, [otro_tope_ocas]
+    mov eax, [fila]
+    cdqe
+    mov dl, al
+    mov eax, [columna]
+    cdqe
+    mov cl, al
+    call buscar_indice_de_oca
+
+
+    cmp rax, -1
+    je ubicar_zorro
     mov dil, [movimiento]
     mov esi, [fila]
     mov edx, [columna]
+    lea r11, [otro_vector_ocas] ; le paso el puntero al vector de ocas
+    mov bl,  [otro_tope_ocas]
     sub rsp, 8
     call capturar
     add rsp, 8
