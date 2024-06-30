@@ -69,7 +69,7 @@ section .data
     print_posicion db "El zorro está en la fila %i y en la columna %i. Comió %i ocas", 10, 0
     mensaje_movimiento db "che, dame un movimiento:", 10, 0
     mensaje_indice db "ingrese las coordenadas de la oca que quiere mover:", 10, 0
-    guardar_partida_pregunta db "Queres guardar la partida? S: si. N: no."
+    guardar_partida_pregunta db "Queres guardar la partida? S: si. N: no:  ", 0 
     formato_movimiento db " %c", 0
 
     formato_coordenada db " %hhi", 0
@@ -147,10 +147,6 @@ main:
     mPrintf
 
 inicializar:
-
-
-
-
 
     ; ESTO ES DE PRUEBA
     lea r8,[zorro_fila]
@@ -357,7 +353,9 @@ moverO:
     jl perdiste
 
 movimiento_exitoso_oca:
+    sub rsp, 8
     call preguntar_guardar_partida
+    add rsp,8
 
 
     jmp loop_zorro
@@ -431,9 +429,6 @@ victoria_ocas:
     jmp terminar_juego
 
 terminar_juego:
-    
-    ;mov rbx, 0
-
 imprimir_contadores:
 
     imprimir_izquierda: 
@@ -468,22 +463,18 @@ imprimir_contadores:
         mov rdi, est_ab_der
         mov rsi, [contadores_zorro + 28]
         mPrintf
-        ;add rbx, 4
-        ;cmp rbx, 32
-            
-        ;jne imprimir_contadores
     ret
 
 preguntar_guardar_partida:
     lea rdi, [rel guardar_partida_pregunta]
     mPrintf
-    ; mov rdi, guardar_partida_pregunta
-    ; mPrintf
+
     mov rdi, formato_movimiento
     mov rsi, guardar_partida_respuesta
     mScanf
+
     cmp dword[guardar_partida_respuesta], 83 ; S
-    je guardar_partida_respuesta
+    je guardar_partida
     cmp dword[guardar_partida_respuesta], 78 ; N
     je loop_juego
     jmp preguntar_guardar_partida
