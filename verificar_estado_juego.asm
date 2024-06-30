@@ -15,7 +15,7 @@ section .data
     movimientos_posibles db 65, 87, 68, 88, 81, 69, 90, 67 ; 'A', 'W', 'D', 'X', 'Q', 'E', 'Z', 'C'
 
     ; ESTO NO SE USA PARA NADA PERO LO PUSE PARA QUE NO CORROMPA OTRA MEMORIA, POR AHORA MOVER_ZORRO RECIBE LOS CONTADORES EN R8
-    contadores_zorro times 8 dd 0
+    otros_contadores_zorro times 8 dd 0
 
 section .bss
     ocas_capturadas resd 1
@@ -23,7 +23,7 @@ section .bss
     columna resd 1
     verificador_vector_ocas resq 1
     verificador_tope_ocas resq 1
-
+    contador resq 1
 
 section .text
 verificar_estado_juego:
@@ -47,16 +47,18 @@ derrota_zorro:
 ;|
 ;|------------> en otras palabras: si se puede mover, no pierde jsdnssjd
 
-    mov rbx, movimientos_posibles
-    mov r9, 0
+    ;mov r12, movimientos_posibles
+    mov qword [contador], 0
 
 chequear_movimientos:
 
-    mov dil, byte [rbx + r9]
+    mov r12, movimientos_posibles
+    mov r9, [contador]
+    mov dil, byte [r12 + r9]
     mov esi, [fila]
     mov edx, [columna]
     mov ecx, 0
-    mov r8, contadores_zorro
+    mov r8, otros_contadores_zorro
     lea r11, [verificador_vector_ocas] ; le paso el puntero al vector de ocas
     lea rbx, [verificador_tope_ocas]
     mov r10, 1
@@ -68,8 +70,8 @@ chequear_movimientos:
     cmp rax, -1
     je aqui_no_paso_nada_caballeros
     
-    add r9, 1
-    cmp r9, 8
+    add qword [contador], 1
+    cmp qword [contador], 8
     jnge chequear_movimientos
 
     mov rax, -1

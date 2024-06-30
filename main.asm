@@ -335,6 +335,19 @@ error_zorro:
     mov [captura_reciente], edi
     lea rdi, [rel mensaje_error]
     mPrintf
+    
+    mov edi, [zorro_ocas_capturadas]
+    mov esi, [zorro_fila]
+    mov edx, [zorro_columna]
+    lea r11, [vector_ocas] ; le paso el puntero al vector de ocas
+    lea rbx, [tope_ocas]
+    sub rsp, 8
+    call verificar_estado_juego
+    add rsp, 8
+    cmp rax, 0
+    jg ganaste
+    jl perdiste
+
     cmp dword [captura_reciente], -1
     je imprimir_viveza
     jmp loop_zorro
