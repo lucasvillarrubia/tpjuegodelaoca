@@ -1,3 +1,4 @@
+
 %define MAX_FILAS 7
 %define MAX_COLUMNAS 7
 %define MAX_CASILLEROS 49
@@ -218,28 +219,3 @@ imprimir_casillero:
     jl imprimir_casillero
     ret
 
-
-esta_dentro_tablero:
-    mov rax, 0
-    cmp dword [pos_fila], 1
-    jl fuera_de_rango
-    cmp dword [pos_fila], MAX_FILAS
-    jg fuera_de_rango
-    cmp dword [pos_columna], 1
-    jl fuera_de_rango
-    cmp dword [pos_columna], MAX_COLUMNAS
-    jg fuera_de_rango
-    cmp dword [pos_columna], 3
-    jl chequear_esquinas
-    cmp dword [pos_columna], 5
-    jg chequear_esquinas
-    ret
-chequear_esquinas:
-    cmp dword [pos_fila], 3
-    jl fuera_de_rango
-    cmp dword [pos_fila], 5
-    jg fuera_de_rango
-    ret
-fuera_de_rango:
-    mov rax, 1
-    ret

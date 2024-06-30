@@ -1,3 +1,4 @@
+
 %define ARRIBA 'W'
 %define IZQUIERDA 'A'
 %define ABAJO 'S'
@@ -446,7 +447,3 @@ imprimir_contadores:
             
         ;jne imprimir_contadores
     ret
-
-
-   
-
