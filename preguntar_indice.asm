@@ -22,8 +22,8 @@ section .data
     mensaje_error db "mal int ", 10, 0
 
 section .bss
-    auxiliar_fila resb 4
-    auxiliar_columna resb 4
+    puntero_auxiliar_fila_2 resq 1
+    puntero_auxiliar_columna_2 resq 1
     buffer_fila resb 10
     buffer_columna resb 10
     
@@ -32,33 +32,35 @@ section .text
 global preguntar_indice
 
 preguntar_indice:
+    mov [puntero_auxiliar_fila_2], rdi
+    mov [puntero_auxiliar_columna_2], rsi
 
     lea rdi, [rel mensaje_indice_fil]
     mPrintf
 
     mov rdi, formato_coordenada
-    mov rsi, auxiliar_fila 
+    mov rsi, [puntero_auxiliar_fila_2] 
     mScanf
-
-    lea rdi, [auxiliar_fila]
-    call validar_entero
-    test rax, rax
-    mov [auxiliar_fila], eax
+    
+    ; lea rdi, [auxiliar_fila]
+    ; call validar_entero
+    ; test rax, rax
+    ; mov [auxiliar_fila], eax
 
     lea rdi, [rel mensaje_indice_col]
     mPrintf
 
     mov rdi, formato_coordenada
-    mov rsi, auxiliar_columna
+    mov rsi, [puntero_auxiliar_columna_2]
     mScanf
 
     ; Convertir y validar indice de columna
-    lea rdi, [auxiliar_columna]
-    call validar_entero
-    test rax, rax
-    mov [auxiliar_columna], eax
+    ; lea rdi, [auxiliar_columna]
+    ; call validar_entero
+    ; test rax, rax
+    ; mov [auxiliar_columna], eax
 
 ret
 
 validar_entero:
-    
+    ret    

@@ -273,9 +273,12 @@ movimiento_exitoso:
     jmp loop_oca
 
 pedir_indice:
+    lea rdi, [auxiliar_fila]
+    lea rsi, [auxiliar_columna]
     sub rsp, 8
     call preguntar_indice
     add rsp, 8
+
     lea rdi, [vector_ocas]
     mov sil, [tope_ocas]
     mov dl,  [auxiliar_fila]
@@ -310,10 +313,7 @@ moverO:
     call mover_oca
     add rsp, 8
     cmp rax, 0
-    jg error
-    jl salir
-    jmp pedir_movimientoO
-
+    jl error
 
 movimiento_exitoso_oca:
     jmp loop_juego
