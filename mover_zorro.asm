@@ -66,8 +66,8 @@ section .bss
     columna_anterior resd 1
     fila_siguiente   resd 1
     columna_siguiente resd 1
-
     captura_reciente resd 1
+    mov_falso resq 1
     ;ocasss
     otro_vector_ocas resq 1
     otro_tope_ocas resq 1
@@ -80,6 +80,7 @@ mover_zorro:
     mov [captura_reciente], ecx
     mov [otro_vector_ocas], r11 ; le paso el puntero al vector de ocas
     mov [otro_tope_ocas], rbx
+    mov [mov_falso], r10
 
 
 movimiento_es_letra:
@@ -291,14 +292,16 @@ exito:
     mov r11, [otro_vector_ocas] ; le paso el puntero al vector de ocas
     mov rax, [otro_tope_ocas]
     mov bl,  [rax]
+    mov cl, byte [mov_falso]
     sub rsp, 8
     call capturar
     add rsp, 8
     cmp rax, 0
     jne termina_sin_capturar
+
     ; falso movimiento no modifica la posición
-    ; cmp r10, 0
-    ; jne salida
+    cmp qword [mov_falso], 1
+    je salida
 
 
     mov [fila_siguiente], edi
@@ -326,8 +329,8 @@ exito:
 ubicar_zorro:
 
     ; falso movimiento no modifica la posición
-    ; cmp r10, 0
-    ; jne salida
+    cmp qword [mov_falso], 1
+    je salida
 
     cmp dword [captura_reciente], 1
     je termina_haciendose_el_vivo_despues_de_comer

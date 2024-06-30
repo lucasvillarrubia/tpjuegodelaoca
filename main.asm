@@ -168,6 +168,8 @@ loop_juego:
     mPrintf
 
 loop_zorro:
+    mov rdi, instruccionesZ
+    mPrintf
     mov rdi, turno_zorro
     mPrintf
 
@@ -184,6 +186,8 @@ loop_zorro:
 
 loop_oca:
     ;limpiarConsola
+    mov rdi, instruccionesO
+    mPrintf
     mov rdi, turno_oca
     mPrintf
 
@@ -237,17 +241,15 @@ moverZ:
     mov edx, [zorro_columna]
     mov ecx, [captura_reciente]
     mov r8,  contadores_zorro
-
-    ;  la única manera que pensé para que mover_zorro distinga entre un movimiento real y uno que no modifique la posición (?
-    ; mov r10, 0
     
     lea r11, [vector_ocas] ; le paso el puntero al vector de ocas
     lea rbx, [tope_ocas]
+    mov r10, 0
     sub rsp, 8
     call mover_zorro
     add rsp, 8
     cmp rax, 0
-    jg error
+    jg error_zorro
     jl salir
 
     jmp movimiento_exitoso
@@ -262,17 +264,6 @@ movimiento_exitoso:
     ; chequeo si el zorro acaba de comer
     cmp dword [captura_reciente], 0
     jne imprimir_captura_zorro
-
-
-    ;mov edi, [zorro_ocas_capturadas]
-    ;mov esi, [zorro_fila]
-    ;mov edx, [zorro_columna]
-    ;sub rsp, 8
-    ;call verificar_estado_juego
-    ;add rsp, 8
-    ;cmp rax, 0
-    ;jg ganaste
-    ;jl perdiste
 
 
     lea rdi, [rel mensaje_exito]
@@ -327,13 +318,25 @@ moverO:
     call mover_oca
     add rsp, 8
     cmp rax, 0
-    jl error
+    jl error_oca
+
+    mov edi, [zorro_ocas_capturadas]
+    mov esi, [zorro_fila]
+    mov edx, [zorro_columna]
+    lea r11, [vector_ocas] ; le paso el puntero al vector de ocas
+    lea rbx, [tope_ocas]
+    sub rsp, 8
+    call verificar_estado_juego
+    add rsp, 8
+    cmp rax, 0
+    jg ganaste
+    jl perdiste
 
 movimiento_exitoso_oca:
     jmp loop_zorro
 
 
-error:
+error_zorro:
     ;limpiarConsola ;limpiarConsola
     mov [captura_reciente], edi
     lea rdi, [rel mensaje_error]
@@ -342,20 +345,29 @@ error:
     je imprimir_viveza
     jmp loop_zorro
 
+error_oca:
+    ;limpiarConsola ;limpiarConsola
+    lea rdi, [rel mensaje_error]
+    mPrintf
+    jmp loop_oca
+
+
 imprimir_captura_zorro:
     lea rdi, [rel mensaje_captura]
     mPrintf
     inc dword [zorro_ocas_capturadas]
 
-    ;mov edi, [zorro_ocas_capturadas]
-    ;mov esi, [zorro_fila]
-    ;mov edx, [zorro_columna]
-    ;sub rsp, 8
-    ;call verificar_estado_juego
-    ;add rsp, 8
-    ;cmp rax, 0
-    ;jg ganaste
-    ;jl perdiste
+    mov edi, [zorro_ocas_capturadas]
+    mov esi, [zorro_fila]
+    mov edx, [zorro_columna]
+    lea r11, [vector_ocas] ; le paso el puntero al vector de ocas
+    lea rbx, [tope_ocas]
+    sub rsp, 8
+    call verificar_estado_juego
+    add rsp, 8
+    cmp rax, 0
+    jg ganaste
+    jl perdiste
     jmp loop_zorro
 
 

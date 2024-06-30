@@ -21,6 +21,8 @@ section .bss
     ocas_capturadas resd 1
     fila resd 1
     columna resd 1
+    verificador_vector_ocas resq 1
+    verificador_tope_ocas resq 1
 
 
 section .text
@@ -28,6 +30,8 @@ verificar_estado_juego:
     mov [ocas_capturadas], edi
     mov [fila], esi
     mov [columna], edx
+    mov [verificador_vector_ocas], r11 ; le paso el puntero al vector de ocas
+    mov [verificador_tope_ocas], rbx
 victoria_zorro:
     cmp dword [ocas_capturadas], CANT_OCAS_PARA_GANAR
     jnge derrota_zorro
@@ -48,14 +52,14 @@ derrota_zorro:
 
 chequear_movimientos:
 
-    ; PARA QUE SE HAGA UN FALSO MOVIMIENTO
-    mov r10, 1
-
     mov dil, byte [rbx + r9]
     mov esi, [fila]
     mov edx, [columna]
     mov ecx, 0
     mov r8, contadores_zorro
+    lea r11, [verificador_vector_ocas] ; le paso el puntero al vector de ocas
+    lea rbx, [verificador_tope_ocas]
+    mov r10, 1
     sub rsp, 8
     call mover_zorro
     add rsp, 8
