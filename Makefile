@@ -2,12 +2,12 @@ NASM=nasm
 NASMFLAGS=-f elf64 -g -F dwarf
 
 GCC=gcc
-GCCFLAGS=-no-pie -z noexecstack
+GCCFLAGS=-no-pie -z noexecstack -g
 
 all: juego.out
 
-juego.out: main.o preguntar_orientacion.o capturar.o inicializar_zorro.o mover_zorro.o verificar_estado_juego.o inicializar_juego.o imprimir_tablero.o inicializar_ocas.o buscar_oca.o eliminar_oca.o mover_oca.o definir_matriz.o
-	$(GCC) main.o preguntar_orientacion.o capturar.o inicializar_zorro.o mover_zorro.o verificar_estado_juego.o inicializar_juego.o imprimir_tablero.o inicializar_ocas.o buscar_oca.o eliminar_oca.o mover_oca.o definir_matriz.o -o juego.out $(GCCFLAGS)
+juego.out: main.o preguntar_indice.o preguntar_orientacion.o capturar.o inicializar_zorro.o mover_zorro.o verificar_estado_juego.o inicializar_juego.o imprimir_tablero.o inicializar_ocas.o buscar_oca.o eliminar_oca.o mover_oca.o definir_matriz.o
+	$(GCC) main.o preguntar_indice.o preguntar_orientacion.o capturar.o inicializar_zorro.o mover_zorro.o verificar_estado_juego.o inicializar_juego.o imprimir_tablero.o inicializar_ocas.o buscar_oca.o eliminar_oca.o mover_oca.o definir_matriz.o -o juego.out $(GCCFLAGS)
 
 
 main.o: main.asm
@@ -49,6 +49,8 @@ verificar_estado_juego.o: verificar_estado_juego.asm
 preguntar_orientacion.o : preguntar_orientacion.asm
 	$(NASM) $(NASMFLAGS) -o preguntar_orientacion.o preguntar_orientacion.asm
 
+preguntar_indice.o: preguntar_indice.asm
+	$(NASM) $(NASMFLAGS) -o preguntar_indice.o preguntar_indice.asm
 
 clean:
 	rm -f *.o *.lst juego.out

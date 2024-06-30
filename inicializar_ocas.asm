@@ -2,7 +2,7 @@ global inicializar_ocas
 
 %define ARRIBA 'W'
 %define IZQUIERDA 'A'
-%define ABAJO 'S'
+%define ABAJO 'X'
 %define DERECHA 'D'
 %define MAX_FILAS 7
 %define MAX_COLUMNAS 7

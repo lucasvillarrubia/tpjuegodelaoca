@@ -46,7 +46,7 @@ extern imprimir_tablero
 extern buscar_indice_de_oca
 extern mover_oca
 extern eliminar_oca
-
+extern preguntar_indice
 extern preguntar_orientacion
 
 
@@ -54,6 +54,10 @@ global main
 
 
 section .data
+    mensaje_indice_fil db "Por favor ingrese las fila en donde esta la oca que quiere mover:", 10, 0
+    mensaje_indice_col db "ahora ingrese la columna de la oca que quiere mover:", 10, 0
+
+
     zorro_ocas_capturadas dd 0   
     zorro_comio_suficientes_ocas db 0          ;   ;   datos lógica zorro
     print_start db "El zorro comienza en la fila %i y en la columna %i y está ayunado", 10, 0
@@ -61,7 +65,7 @@ section .data
     mensaje_movimiento db "che, dame un movimiento:", 10, 0
     mensaje_indice db "ingrese las coordenadas de la oca que quiere mover:", 10, 0
     formato_movimiento db " %c", 0
-    formato_coordenada db " %i%i", 0
+    formato_coordenada db " %hhi", 0
     captura_reciente dd 0
     cmd_clear db "clear", 0
     mensaje_error db "bueno: metiste cualquiera, o una letra que no sirve, o saliste del tablero, o no comiste nada", 10, 0
@@ -226,7 +230,7 @@ moverZ:
     mov esi, [zorro_fila]
     mov edx, [zorro_columna]
     mov ecx, [captura_reciente]
-    mov r8, contadores_zorro
+    mov r8,  contadores_zorro
 
     ;  la única manera que pensé para que mover_zorro distinga entre un movimiento real y uno que no modifique la posición (?
     mov r10, 0
@@ -269,19 +273,18 @@ movimiento_exitoso:
     jmp loop_oca
 
 pedir_indice:
-    lea rdi, [rel mensaje_indice]
-    mPrintf
-    mov rdi, formato_coordenada
-    mov rsi, auxiliar_fila 
-    mov rdx, auxiliar_columna
-    mScanf
- 
-    mov rdi, [vector_ocas]
-    mov r8,  [tope_ocas]
+    sub rsp, 8
+    call preguntar_indice
+    add rsp, 8
+    lea rdi, [vector_ocas]
+    mov sil, [tope_ocas]
     mov dl,  [auxiliar_fila]
     mov cl,  [auxiliar_columna]
     call buscar_indice_de_oca
-    mov [indice_de_oca] , rax
+    cmp rax, -1
+    je pedir_indice; 
+    mov [indice_de_oca], rax
+    
 
 pedir_movimientoO:
     lea rdi, [rel mensaje_movimiento]
@@ -295,13 +298,13 @@ descartar_sobra_input_oca:
     jne descartar_sobra_input_oca
 
 moverO:
+    lea rdi, [vector_ocas]
     mov sil, [movimiento]
-    mov rdi, [vector_ocas]
     mov dl, [zorro_fila]
     mov cl, [zorro_columna]
     mov r8, [indice_de_oca]
-    mov r8, [tope_ocas]
-    mov r10, [movimientos_validos]
+    mov r9, [tope_ocas]
+    lea r10, [movimientos_validos]
 
     sub rsp, 8
     call mover_oca
