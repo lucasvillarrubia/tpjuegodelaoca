@@ -24,8 +24,8 @@ section .data
     long_fila           dd 7
     ;salto_de_linea      db 10   ; '\n'
     espacio             db 32   ; ' '
-    zorro               db 90   ; 'Z'
-    oca                 db 79   ; 'O'
+    ;zorro               db 90   ; 'Z'
+    ;oca                 db 79   ; 'O'
     vacio               db 45   ; '-'
     ;max_casilleros      dd MAX_CASILLEROS
     puntero_matriz      dd 0
@@ -48,6 +48,9 @@ section .bss
     mi_puntero_vector_ocas                          resq 1
     mi_tope_ocas                                    resb 1
 
+    zorro                                           resb 1
+    oca                                             resb 1
+
 
 section .text
     
@@ -58,6 +61,8 @@ imprimir_tablero:
     mov dword [zorrito_columna], esi
     mov [mi_puntero_vector_ocas], rdx
     mov [mi_tope_ocas], cl
+    mov byte [zorro], al
+    mov byte [oca], bl
     call llenar_matriz
     call imprimir_tablero_nuevo
     ret
@@ -217,5 +222,31 @@ imprimir_casillero:
     ;loop imprimir_casillero
     cmp dword [puntero_matriz], MAX_CASILLEROS
     jl imprimir_casillero
+    ret
+
+
+esta_dentro_tablero:
+    mov rax, 0
+    cmp dword [pos_fila], 1
+    jl fuera_de_rango
+    cmp dword [pos_fila], MAX_FILAS
+    jg fuera_de_rango
+    cmp dword [pos_columna], 1
+    jl fuera_de_rango
+    cmp dword [pos_columna], MAX_COLUMNAS
+    jg fuera_de_rango
+    cmp dword [pos_columna], 3
+    jl chequear_esquinas
+    cmp dword [pos_columna], 5
+    jg chequear_esquinas
+    ret
+chequear_esquinas:
+    cmp dword [pos_fila], 3
+    jl fuera_de_rango
+    cmp dword [pos_fila], 5
+    jg fuera_de_rango
+    ret
+fuera_de_rango:
+    mov rax, 1
     ret
 
