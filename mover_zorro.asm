@@ -291,8 +291,7 @@ exito:
     mov edx, [columna_anterior]
     mov r11, [otro_vector_ocas] ; le paso el puntero al vector de ocas
     mov rax, [otro_tope_ocas]
-    mov bl,  [rax]
-    mov cl, byte [mov_falso]
+    mov bl,  byte [rax]
     sub rsp, 8
     call capturar
     add rsp, 8

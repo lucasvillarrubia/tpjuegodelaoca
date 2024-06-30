@@ -76,12 +76,14 @@ section .data
     captura_reciente dd 0
     cmd_clear db "clear", 0
     mensaje_error db "bueno: metiste cualquiera, o una letra que no sirve, o saliste del tablero, o no comiste nada", 10, 0
+    mensaje_error_ocaaaaaaaa db "SRGJDRTYJFRJDFJDFGJDFJKDFHFYTJFY", 10, 0
     mensaje_exito db "termino el movimiento todo joya", 10, 0
     mensaje_vivo db "te avivaste pero no funciona", 10, 0
     mensaje_captura db "devoraste", 10, 0
     mensaje_salida db "saliste querido", 10, 0
-    aviso_victoria db "somos campeones", 10, 0
-    aviso_derrota db "era por abajo", 10, 0           
+
+    aviso_victoria db "gano el zorro?", 10, 0
+    aviso_derrota db "ganaron las ocas $)", 10, 0                  
     pregunta_continuar_partida db "Queres continuar la partida guardada? S: si. N: no:  ", 0
 
     estado_juego dd 0
@@ -252,8 +254,6 @@ loop_oca:
 
     jmp pedir_indice
 
-
-
 imprimir_posicion:
     ; COMPLETAR PRINT DE ZORRO CON: OCAS_CAPTURADAS
     mov rdi, print_posicion
@@ -387,13 +387,26 @@ error_zorro:
     mov [captura_reciente], edi
     lea rdi, [rel mensaje_error]
     mPrintf
+
+    mov edi, [zorro_ocas_capturadas]
+    mov esi, [zorro_fila]
+    mov edx, [zorro_columna]
+    lea r11, [vector_ocas] ; le paso el puntero al vector de ocas
+    lea rbx, [tope_ocas]
+    sub rsp, 8
+    call verificar_estado_juego
+    add rsp, 8
+    cmp rax, 0
+    jg ganaste
+    jl perdiste
+
     cmp dword [captura_reciente], -1
     je imprimir_viveza
     jmp loop_zorro
 
 error_oca:
     ;limpiarConsola ;limpiarConsola
-    lea rdi, [rel mensaje_error]
+    lea rdi, [rel mensaje_error_ocaaaaaaaa]
     mPrintf
     jmp loop_oca
 
@@ -437,7 +450,7 @@ ganaste:
 perdiste:
     lea rdi, [rel aviso_derrota]
     mPrintf
-    ret
+    jmp terminar_juego
 
 victoria_zorro:
     mov rdi, mensaje_victoria_zorro

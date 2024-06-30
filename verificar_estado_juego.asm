@@ -1,4 +1,6 @@
 %define CANT_OCAS_PARA_GANAR 12
+%define MAX_FILAS 7
+%define MAX_COLUMNAS 7
 
 ;
 ; ACÁ SE LLEGA DE DOS FORMAS:
@@ -6,30 +8,40 @@
 ; - EL ZORRO ACABA DE COMER UNA OCA (SE VERIFICA SI GANÓ O NO, DESPUÉS SI PERDIÓ)
 ;
 
-
+extern printf
 extern mover_zorro
+extern buscar_indice_de_oca
 global verificar_estado_juego
 
 
 section .data
-    movimientos_posibles db 65, 87, 68, 83, 81, 69, 90, 88 ; 'A', 'W', 'D', 'S', 'Q', 'E', 'Z', 'X'
+    movimientos_posibles db 65, 87, 68, 88, 81, 69, 90, 67 ; 'A', 'W', 'D', 'X', 'Q', 'E', 'Z', 'C'
+
+
+
+    
+    aver db "salió del verificar con contador: %li y movimiento: %c", 10, 0
+
+
 
     ; ESTO NO SE USA PARA NADA PERO LO PUSE PARA QUE NO CORROMPA OTRA MEMORIA, POR AHORA MOVER_ZORRO RECIBE LOS CONTADORES EN R8
-    contadores_zorro times 8 dd 0
+    otros_contadores_zorro times 8 dd 0
 
 section .bss
     ocas_capturadas resd 1
-    fila resd 1
-    columna resd 1
+    fila_verificar resd 1
+    columna_verificar resd 1
+    verificar_mov resb 1
+    ;ocass
     verificador_vector_ocas resq 1
-    verificador_tope_ocas resq 1
-
+    verificador_tope_ocas resb 1
+    contador resq 1
 
 section .text
 verificar_estado_juego:
     mov [ocas_capturadas], edi
-    mov [fila], esi
-    mov [columna], edx
+    mov [fila_verificar], esi
+    mov [columna_verificar], edx
     mov [verificador_vector_ocas], r11 ; le paso el puntero al vector de ocas
     mov [verificador_tope_ocas], rbx
 victoria_zorro:
@@ -47,31 +59,173 @@ derrota_zorro:
 ;|
 ;|------------> en otras palabras: si se puede mover, no pierde jsdnssjd
 
-    mov rbx, movimientos_posibles
-    mov r9, 0
+    ;mov r12, movimientos_posibles
+    mov qword [contador], 0
+    
 
 chequear_movimientos:
 
-    mov dil, byte [rbx + r9]
-    mov esi, [fila]
-    mov edx, [columna]
-    mov ecx, 0
-    mov r8, contadores_zorro
-    lea r11, [verificador_vector_ocas] ; le paso el puntero al vector de ocas
-    lea rbx, [verificador_tope_ocas]
-    mov r10, 1
-    sub rsp, 8
-    call mover_zorro
-    add rsp, 8
-
-    ; si se mueve exitosamente, recibe el código de salida de mover_zorro (-1)
-    cmp rax, -1
-
+    cmp qword [contador], 8
+    jge zorro_acorralado
+    mov r12, movimientos_posibles
+    mov r9, qword [contador]
+    mov dil, byte [r12 + r9]
+    mov byte [verificar_mov], dil
+    ; LLAMO A ES_MOV_VALIDO
+    ; ESPERO 0 SI SE PUEDE MOVER
+    ; ESPERO 1 SI QUEDA AFUERA DEL TABLERO
+    ; ESPERO -1 SI PUEDE CAPTURAR
+    call es_movimiento_valido
+    cmp rax, 0
     je aqui_no_paso_nada_caballeros
-    add r9, 1
-    cmp r9, 8
-    jnge chequear_movimientos
+    jl probar_captura
+    add qword [contador], 1
+    jmp chequear_movimientos
 
+
+es_movimiento_valido:
+    cmp byte [verificar_mov], 65 ;A
+    je mov_izquierda
+    cmp byte [verificar_mov], 68 ;D
+    je mov_derecha
+    cmp byte [verificar_mov], 87 ;W
+    je mov_arriba
+    cmp byte [verificar_mov], 88 ;X
+    je mov_abajo
+    cmp byte [verificar_mov], 81 ;Q
+    je mov_arriba_izquierda
+    cmp byte [verificar_mov], 69 ;E
+    je mov_arriba_derecha
+    cmp byte [verificar_mov], 90 ;Z
+    je mov_abajo_izquierda
+    cmp byte [verificar_mov], 67 ;C
+    je mov_abajo_derecha
+    jmp zorro_acorralado
+mov_izquierda:
+    dec dword [columna_verificar]
+    call esta_dentro_tablero
+    cmp rax, 0
+    jne termina_fuera_de_limites
+    jmp se_podria_mover
+mov_derecha:
+    inc dword [columna_verificar]
+    call esta_dentro_tablero
+    cmp rax, 0
+    jne termina_fuera_de_limites
+    jmp se_podria_mover
+mov_arriba:
+    dec dword [fila_verificar]
+    call esta_dentro_tablero
+    cmp rax, 0
+    jne termina_fuera_de_limites
+    jmp se_podria_mover
+mov_abajo:
+    inc dword [fila_verificar]
+    call esta_dentro_tablero
+    cmp rax, 0
+    jne termina_fuera_de_limites
+    jmp se_podria_mover
+mov_arriba_izquierda:
+    dec dword [fila_verificar]
+    dec dword [columna_verificar]
+    call esta_dentro_tablero
+    cmp rax, 0
+    jne termina_fuera_de_limites
+    jmp se_podria_mover
+mov_arriba_derecha:
+    dec dword [fila_verificar]
+    inc dword [columna_verificar]
+    call esta_dentro_tablero
+    cmp rax, 0
+    jne termina_fuera_de_limites
+    jmp se_podria_mover
+mov_abajo_izquierda:
+    inc dword [fila_verificar]
+    dec dword [columna_verificar]
+    call esta_dentro_tablero
+    cmp rax, 0
+    jne termina_fuera_de_limites
+    jmp se_podria_mover
+mov_abajo_derecha:
+    inc dword [fila_verificar]
+    inc dword [columna_verificar]
+    call esta_dentro_tablero
+    cmp rax, 0
+    jne termina_fuera_de_limites
+    jmp se_podria_mover
+esta_dentro_tablero:
+    mov rax, 0
+    cmp dword [fila_verificar], 1
+    jl fuera_de_rango
+    cmp dword [fila_verificar], MAX_FILAS
+    jg fuera_de_rango
+    cmp dword [columna_verificar], 1
+    jl fuera_de_rango
+    cmp dword [columna_verificar], MAX_COLUMNAS
+    jg fuera_de_rango
+    cmp dword [columna_verificar], 3
+    jl chequear_esquinas
+    cmp dword [columna_verificar], 5
+    jg chequear_esquinas
+    ret
+chequear_esquinas:
+    cmp dword [fila_verificar], 3
+    jl fuera_de_rango
+    cmp dword [fila_verificar], 5
+    jg fuera_de_rango
+    ret
+fuera_de_rango:
+    mov rax, 1
+    ret
+
+
+se_podria_mover:
+    call chequear_si_hay_oca
+    cmp rax, -1
+    je podria_capturar
+    mov rax, 0
+    ret
+podria_capturar:
+    mov rax, -1
+    ret
+termina_fuera_de_limites:
+    mov rax, 1
+    ret
+
+
+probar_captura:
+    call es_movimiento_valido
+    cmp rax, 0
+    je aqui_no_paso_nada_caballeros
+    add qword [contador], 1
+    jmp chequear_movimientos
+
+
+
+chequear_si_hay_oca:
+    mov rdi, [verificador_vector_ocas]
+    mov sil, [verificador_tope_ocas]
+    mov eax, [fila_verificar]
+    cdqe
+    mov dl, al
+    mov eax, [columna_verificar]
+    cdqe
+    mov cl, al
+    sub rsp, 8
+    call buscar_indice_de_oca
+    add rsp, 8
+    ; si no hay ninguna oca en las contiguas: se puede mover --> NO PIERDE
+    cmp rax, -1
+    je no_hay_oca
+    ;hay una oca en esa contigua
+    mov rax, -1
+    ret
+no_hay_oca:
+    mov rax, 0
+    ret
+    
+
+zorro_acorralado:
     mov rax, -1
     ret
 aqui_no_paso_nada_caballeros:
