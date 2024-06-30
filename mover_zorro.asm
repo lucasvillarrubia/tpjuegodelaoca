@@ -329,8 +329,9 @@ ubicar_zorro:
     ; cmp r10, 0
     ; jne salida
 
-    cmp dword [captura_reciente], 0
-    jne termina_haciendose_el_vivo_despues_de_comer
+    cmp dword [captura_reciente], 1
+    je termina_haciendose_el_vivo_despues_de_comer
+    mov dword [captura_reciente], 0
     mov rax, 0
     mov edi, [fila_anterior]
     mov esi, [columna_anterior]

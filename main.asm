@@ -183,7 +183,7 @@ loop_zorro:
 
 
 loop_oca:
-    limpiarConsola
+    ;limpiarConsola
     mov rdi, turno_oca
     mPrintf
 
@@ -330,17 +330,17 @@ moverO:
     jl error
 
 movimiento_exitoso_oca:
-    jmp loop_juego
+    jmp loop_zorro
 
 
 error:
-    limpiarConsola ;limpiarConsola
-    ; mov [captura_reciente], edi
+    ;limpiarConsola ;limpiarConsola
+    mov [captura_reciente], edi
     lea rdi, [rel mensaje_error]
     mPrintf
-    cmp dword [captura_reciente], 0
-    jl imprimir_viveza
-    jmp loop_oca
+    cmp dword [captura_reciente], -1
+    je imprimir_viveza
+    jmp loop_zorro
 
 imprimir_captura_zorro:
     lea rdi, [rel mensaje_captura]
