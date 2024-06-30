@@ -152,7 +152,7 @@ inicializar:
     call inicializar_juego
     add rsp, 8
 
-    
+
     mov dword [zorro_fila], edi
     mov dword [zorro_columna], esi
     mov dword [zorro_ocas_capturadas], edx
@@ -237,7 +237,7 @@ moverZ:
     mov r10, 0
     
     lea r11, [vector_ocas] ; le paso el puntero al vector de ocas
-    mov bl,  [tope_ocas]
+    lea rbx, [tope_ocas]
     sub rsp, 8
     call mover_zorro
     add rsp, 8

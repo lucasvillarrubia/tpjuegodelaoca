@@ -178,6 +178,9 @@ exito:
     cmp rax, -1
     je ubicar_zorro
     jmp termina_sin_capturar
+    
+
+
     ;cmp rax, 0
     ;je termina_sin_capturar
     ;jmp ubicar_zorro
