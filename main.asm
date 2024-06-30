@@ -82,7 +82,7 @@ section .data
     mensaje_salida db "saliste querido", 10, 0
     aviso_victoria db "somos campeones", 10, 0
     aviso_derrota db "era por abajo", 10, 0           
-
+    pregunta_continuar_partida db "Queres continuar la partida guardada? S: si. N: no:  ", 0
 
     estado_juego dd 0
     mensaje_victoria_zorro db "Ganó el zorrooooo"
@@ -125,6 +125,7 @@ section .bss
     es_turno_del_zorro resb 1
     orientacion                 resb 1
     guardar_partida_respuesta             resd 1
+    cargar_partida_respuesta                resd 1
 
     ;seccion zorro
     zorro_fila resd 1
@@ -148,7 +149,8 @@ main:
 
 inicializar:
 
-    ; ESTO ES DE PRUEBA
+
+    
     lea r8,[zorro_fila]
 	lea	r9,[zorro_columna]
 	lea	r10,[vector_ocas]
@@ -161,8 +163,18 @@ inicializar:
     add rsp,8
     cmp rax, -1
     je  inicializar_juego_sin_archivo
-    jmp loop_juego
 
+preguntar_continuar_partida_guardada
+    mov rdi, pregunta_continuar_partida
+    mPrintf
+    mov rdi, formato_movimiento
+    mov rsi, cargar_partida_respuesta
+    mScanf
+    cmp dword[cargar_partida_respuesta], 78 ; N
+    je  inicializar_juego_sin_archivo
+    cmp dword[cargar_partida_respuesta], 83 ; S
+    jne preguntar_continuar_partida_guardada
+    jmp loop_juego
 
 inicializar_juego_sin_archivo:
     sub rsp, 8
@@ -356,8 +368,8 @@ movimiento_exitoso_oca:
     sub rsp, 8
     call preguntar_guardar_partida
     add rsp,8
-
-
+    cmp rax, 1
+    je terminar_juego
     jmp loop_zorro
 
 
@@ -476,8 +488,13 @@ preguntar_guardar_partida:
     cmp dword[guardar_partida_respuesta], 83 ; S
     je guardar_partida
     cmp dword[guardar_partida_respuesta], 78 ; N
-    je loop_juego
+    je seguir_partida
     jmp preguntar_guardar_partida
+
+
+seguir_partida:
+    mov rax, -1
+    ret
 
 guardar_partida:
     mov r8 ,[zorro_fila]		
@@ -486,9 +503,9 @@ guardar_partida:
 	mov	r11,[tope_ocas]              
 	lea	r12,[movimientos_validos] 	
 	lea r13	,[contadores_zorro]
-
     sub rsp, 8
     call escribir_archivo
     add rsp,8
 
-    jmp terminar_juego
+    mov rax, 1
+    ret
