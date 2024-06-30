@@ -50,6 +50,10 @@ extern eliminar_oca
 extern preguntar_indice
 extern preguntar_orientacion
 
+extern escribir_archivo
+
+extern leer_archivo
+
 
 global main
 
@@ -159,6 +163,19 @@ inicializar:
     mov dword [zorro_ocas_capturadas], edx
     mov byte [zorro_comio_suficientes_ocas], cl
     mov byte [es_turno_del_zorro], ch
+
+    mov r8 ,[zorro_fila]		
+	mov	r9 ,[zorro_columna] 			
+	mov	r10,[vector_ocas]     		
+	lea	r11,[tope_ocas]              
+	lea	r12,[movimientos_validos] 	
+	lea r13	,[contadores_zorro]
+
+    sub rsp, 8
+    call escribir_archivo
+    add rsp,8
+
+    ret
 
 loop_juego:
 
