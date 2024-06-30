@@ -69,7 +69,9 @@ section .data
     print_posicion db "El zorro está en la fila %i y en la columna %i. Comió %i ocas", 10, 0
     mensaje_movimiento db "che, dame un movimiento:", 10, 0
     mensaje_indice db "ingrese las coordenadas de la oca que quiere mover:", 10, 0
+    guardar_partida_pregunta db "Queres guardar la partida? S: si. N: no."
     formato_movimiento db " %c", 0
+
     formato_coordenada db " %hhi", 0
     captura_reciente dd 0
     cmd_clear db "clear", 0
@@ -122,6 +124,7 @@ section .bss
     gano_zorro resb 1
     es_turno_del_zorro resb 1
     orientacion                 resb 1
+    guardar_partida_respuesta             resd 1
 
     ;seccion zorro
     zorro_fila resd 1
@@ -144,6 +147,28 @@ main:
     mPrintf
 
 inicializar:
+
+
+
+
+
+    ; ESTO ES DE PRUEBA
+    lea r8,[zorro_fila]
+	lea	r9,[zorro_columna]
+	lea	r10,[vector_ocas]
+	lea	r11,[tope_ocas]              
+	lea	r12,[movimientos_validos] 	
+	lea r13,[contadores_zorro]
+
+    sub rsp, 8
+    call leer_archivo
+    add rsp,8
+    cmp rax, -1
+    je  inicializar_juego_sin_archivo
+    jmp loop_juego
+
+
+inicializar_juego_sin_archivo:
     sub rsp, 8
     call preguntar_orientacion
     add rsp, 8
@@ -156,26 +181,12 @@ inicializar:
     sub rsp, 8
     call inicializar_juego
     add rsp, 8
-
-
     mov dword [zorro_fila], edi
     mov dword [zorro_columna], esi
     mov dword [zorro_ocas_capturadas], edx
     mov byte [zorro_comio_suficientes_ocas], cl
     mov byte [es_turno_del_zorro], ch
 
-    mov r8 ,[zorro_fila]		
-	mov	r9 ,[zorro_columna] 			
-	mov	r10,[vector_ocas]     		
-	lea	r11,[tope_ocas]              
-	lea	r12,[movimientos_validos] 	
-	lea r13	,[contadores_zorro]
-
-    sub rsp, 8
-    call escribir_archivo
-    add rsp,8
-
-    ret
 
 loop_juego:
 
@@ -346,6 +357,9 @@ moverO:
     jl perdiste
 
 movimiento_exitoso_oca:
+    call preguntar_guardar_partida
+
+
     jmp loop_zorro
 
 
@@ -459,3 +473,31 @@ imprimir_contadores:
             
         ;jne imprimir_contadores
     ret
+
+preguntar_guardar_partida:
+    lea rdi, [rel guardar_partida_pregunta]
+    mPrintf
+    ; mov rdi, guardar_partida_pregunta
+    ; mPrintf
+    mov rdi, formato_movimiento
+    mov rsi, guardar_partida_respuesta
+    mScanf
+    cmp dword[guardar_partida_respuesta], 83 ; S
+    je guardar_partida_respuesta
+    cmp dword[guardar_partida_respuesta], 78 ; N
+    je loop_juego
+    jmp preguntar_guardar_partida
+
+guardar_partida:
+    mov r8 ,[zorro_fila]		
+	mov	r9 ,[zorro_columna] 			
+	lea	r10,[vector_ocas]     		
+	mov	r11,[tope_ocas]              
+	lea	r12,[movimientos_validos] 	
+	lea r13	,[contadores_zorro]
+
+    sub rsp, 8
+    call escribir_archivo
+    add rsp,8
+
+    jmp terminar_juego
