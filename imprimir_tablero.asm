@@ -224,7 +224,6 @@ imprimir_casillero:
     jl imprimir_casillero
     ret
 
-
 esta_dentro_tablero:
     mov rax, 0
     cmp dword [pos_fila], 1
@@ -248,5 +247,4 @@ chequear_esquinas:
     ret
 fuera_de_rango:
     mov rax, 1
-    ret
-
+    
