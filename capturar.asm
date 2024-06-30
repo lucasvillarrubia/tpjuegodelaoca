@@ -48,9 +48,9 @@ es_movimiento_valido:
     je mov_arriba
     cmp byte [movimiento], 119 ;w
     je mov_arriba
-    cmp byte [movimiento], 83 ;S
+    cmp byte [movimiento], 88 ;X
     je mov_abajo
-    cmp byte [movimiento], 115 ;s
+    cmp byte [movimiento], 120 ;x
     je mov_abajo
     cmp byte [movimiento], 81 ;Q
     je mov_arriba_izquierda
@@ -64,9 +64,9 @@ es_movimiento_valido:
     je mov_abajo_izquierda
     cmp byte [movimiento], 122 ;z
     je mov_abajo_izquierda
-    cmp byte [movimiento], 88 ;X
+    cmp byte [movimiento], 67 ;C
     je mov_abajo_derecha
-    cmp byte [movimiento], 120 ;x
+    cmp byte [movimiento], 99 ;c
     je mov_abajo_derecha
     jmp termina_sin_capturar
 mov_izquierda:
@@ -152,9 +152,6 @@ termina_sin_capturar:
     mov rax, 1
     ret
 exito:
-    mov edi, [fila]
-    mov esi, [columna]
-
     ;sub rsp, 8
     ;call hay_una_oca
     ;add rsp, 8
@@ -172,13 +169,21 @@ exito:
     mov eax, [columna]
     cdqe
     mov cl, al
+    mov al, [rdi]
+    mov al, [rdi + 1]
+    mov al, [rdi + 2]
+    mov al, [rdi + 3]
+    mov al, [rdi + 6]
+    mov al, [rdi + 7]
+    mov al, [rdi + 8]
+    mov al, [rdi + 9]
     call buscar_indice_de_oca
 
 
     cmp rax, -1
     je ubicar_zorro
     jmp termina_sin_capturar
-    
+
 
 
     ;cmp rax, 0

@@ -108,8 +108,8 @@ section .data
     instruccionesO db 10, "Aclaraciones de las ocas : ", 10, \
         "Ingrese por pantalla la coordenada de la oca que desea mover y luego realize su movimiento", 10,10, 10, 0
 
-    turno_oca db 10, "Ahora es el turno de las ocas ", 10
-    turno_zorro db 10, "Es el turno del zorro ", 10
+    turno_oca db 10, "Ahora es el turno de las ocas ", 10, 0
+    turno_zorro db 10, "Es el turno del zorro ", 10, 0
        
 
 
@@ -239,7 +239,7 @@ moverZ:
     mov r8,  contadores_zorro
 
     ;  la única manera que pensé para que mover_zorro distinga entre un movimiento real y uno que no modifique la posición (?
-    mov r10, 0
+    ; mov r10, 0
     
     lea r11, [vector_ocas] ; le paso el puntero al vector de ocas
     lea rbx, [tope_ocas]
@@ -313,8 +313,12 @@ descartar_sobra_input_oca:
 moverO:
     lea rdi, [vector_ocas]
     mov sil, [movimiento]
-    mov dl, [zorro_fila]
-    mov cl, [zorro_columna]
+    mov eax, [zorro_fila]
+    cdqe
+    mov dl, al
+    mov eax, [zorro_columna]
+    cdqe
+    mov cl, al
     mov r8, [indice_de_oca]
     mov r9, [tope_ocas]
     lea r10, [movimientos_validos]
@@ -331,7 +335,7 @@ movimiento_exitoso_oca:
 
 error:
     limpiarConsola ;limpiarConsola
-    mov [captura_reciente], edi
+    ; mov [captura_reciente], edi
     lea rdi, [rel mensaje_error]
     mPrintf
     cmp dword [captura_reciente], 0
@@ -358,7 +362,8 @@ imprimir_captura_zorro:
 imprimir_viveza:
     lea rdi, [rel mensaje_vivo]
     mPrintf
-    jmp terminar_turno
+    mov dword[captura_reciente], 0
+    jmp loop_oca
 terminar_turno:
     ret
 salir:

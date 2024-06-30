@@ -288,7 +288,7 @@ exito:
     mov dil, [movimiento]
     mov esi, [fila_anterior]
     mov edx, [columna_anterior]
-    lea r11, [otro_vector_ocas] ; le paso el puntero al vector de ocas
+    mov r11, [otro_vector_ocas] ; le paso el puntero al vector de ocas
     mov rax, [otro_tope_ocas]
     mov bl,  [rax]
     sub rsp, 8
@@ -297,8 +297,8 @@ exito:
     cmp rax, 0
     jne termina_sin_capturar
     ; falso movimiento no modifica la posición
-    cmp r10, 0
-    jne salida
+    ; cmp r10, 0
+    ; jne salida
 
 
     mov [fila_siguiente], edi
@@ -326,8 +326,8 @@ exito:
 ubicar_zorro:
 
     ; falso movimiento no modifica la posición
-    cmp r10, 0
-    jne salida
+    ; cmp r10, 0
+    ; jne salida
 
     cmp dword [captura_reciente], 0
     jne termina_haciendose_el_vivo_despues_de_comer
