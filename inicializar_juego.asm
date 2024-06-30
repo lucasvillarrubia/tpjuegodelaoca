@@ -12,6 +12,8 @@
 
 
 global inicializar_juego
+
+global inicializar_sin_partida_guardada
 extern inicializar_zorro
 
 ;parte de ocas

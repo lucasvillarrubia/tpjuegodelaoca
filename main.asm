@@ -207,11 +207,6 @@ loop_oca:
 
     jmp pedir_indice
 
-chequear_estado:
-    cmp dword [estado_juego], 0
-    jg victoria_zorro
-    jl victoria_ocas
-    je loop_juego
 
 
 imprimir_posicion:
