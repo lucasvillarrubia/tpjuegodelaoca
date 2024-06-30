@@ -12,7 +12,7 @@ global verificar_estado_juego
 
 
 section .data
-    movimientos_posibles db 65, 87, 68, 83, 81, 69, 90, 88 ; 'A', 'W', 'D', 'S', 'Q', 'E', 'Z', 'X'
+    movimientos_posibles db 65, 87, 68, 88, 81, 69, 90, 67 ; 'A', 'W', 'D', 'X', 'Q', 'E', 'Z', 'C'
 
     ; ESTO NO SE USA PARA NADA PERO LO PUSE PARA QUE NO CORROMPA OTRA MEMORIA, POR AHORA MOVER_ZORRO RECIBE LOS CONTADORES EN R8
     contadores_zorro times 8 dd 0
@@ -66,8 +66,8 @@ chequear_movimientos:
 
     ; si se mueve exitosamente, recibe el código de salida de mover_zorro (-1)
     cmp rax, -1
-
     je aqui_no_paso_nada_caballeros
+    
     add r9, 1
     cmp r9, 8
     jnge chequear_movimientos

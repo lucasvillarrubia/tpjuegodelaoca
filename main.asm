@@ -74,8 +74,8 @@ section .data
     mensaje_vivo db "te avivaste pero no funciona", 10, 0
     mensaje_captura db "devoraste", 10, 0
     mensaje_salida db "saliste querido", 10, 0
-    aviso_victoria db "somos campeones", 10, 0
-    aviso_derrota db "era por abajo", 10, 0           
+    aviso_victoria db "gano el zorro?", 10, 0
+    aviso_derrota db "ganaron las ocas $)", 10, 0           
 
 
     estado_juego dd 0
@@ -206,13 +206,6 @@ loop_oca:
 
 
     jmp pedir_indice
-
-chequear_estado:
-    cmp dword [estado_juego], 0
-    jg victoria_zorro
-    jl victoria_ocas
-    je loop_juego
-
 
 imprimir_posicion:
     ; COMPLETAR PRINT DE ZORRO CON: OCAS_CAPTURADAS
@@ -392,7 +385,7 @@ ganaste:
 perdiste:
     lea rdi, [rel aviso_derrota]
     mPrintf
-    ret
+    jmp terminar_juego
 
 victoria_zorro:
     mov rdi, mensaje_victoria_zorro
