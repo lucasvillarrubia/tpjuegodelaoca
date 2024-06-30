@@ -48,7 +48,7 @@ extern buscar_indice_de_oca
 extern mover_oca
 extern eliminar_oca
 extern preguntar_indice
-extern preguntar_orientacion
+extern personalizacion_usuario
 
 
 global main
@@ -118,6 +118,8 @@ section .bss
     gano_zorro resb 1
     es_turno_del_zorro resb 1
     orientacion                 resb 1
+    icono_zorro resb 1
+    icono_ocas resb 1
 
     ;seccion zorro
     zorro_fila resd 1
@@ -141,10 +143,13 @@ main:
 
 inicializar:
     sub rsp, 8
-    call preguntar_orientacion
+    call personalizacion_usuario
     add rsp, 8
 
-    mov [orientacion], rax
+    mov byte [orientacion], al
+    mov byte [icono_zorro], bl
+    mov byte [icono_ocas], cl
+
     lea rdi, [vector_ocas]
     lea rsi, [movimientos_validos]
     lea rdx, [tope_ocas]
@@ -178,6 +183,8 @@ loop_zorro:
     mov esi, [zorro_columna]
     lea rdx, [vector_ocas] ; le paso el puntero al vector de ocas
     mov cl,  [tope_ocas]
+    mov al, [icono_zorro]
+    mov bl, [icono_ocas]
     sub rsp, 8
     call imprimir_tablero
     add rsp, 8
@@ -196,13 +203,11 @@ loop_oca:
     mov esi, [zorro_columna]
     lea rdx, [vector_ocas] ; le paso el puntero al vector de ocas
     mov cl,  [tope_ocas]
-    mov al, [vector_ocas]
-    mov al, [vector_ocas + 1]
+    mov al, [icono_zorro]
+    mov bl, [icono_ocas]
     sub rsp, 8
     call imprimir_tablero
     add rsp, 8
-    mov al, [vector_ocas]
-    mov al, [vector_ocas + 1]
 
 
     jmp pedir_indice
