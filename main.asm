@@ -162,14 +162,15 @@ inicializar:
 	lea	r11,[tope_ocas]              
 	lea	r12,[movimientos_validos] 	
 	lea r13,[contadores_zorro]
-
+    lea r14,[icono_zorro]
+    lea r15,[icono_ocas]
     sub rsp, 8
     call leer_archivo
     add rsp,8
     cmp rax, -1
     je  inicializar_juego_sin_archivo
 
-preguntar_continuar_partida_guardada
+preguntar_continuar_partida_guardada:
     mov rdi, pregunta_continuar_partida
     mPrintf
     mov rdi, formato_movimiento
@@ -511,6 +512,8 @@ guardar_partida:
 	mov	r11,[tope_ocas]              
 	lea	r12,[movimientos_validos] 	
 	lea r13	,[contadores_zorro]
+    mov r14, [icono_zorro]
+    mov r15, [icono_ocas]
     sub rsp, 8
     call escribir_archivo
     add rsp,8

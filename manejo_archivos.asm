@@ -23,7 +23,8 @@ section .bss
 	puntero_vector_ocas 		resq 1
 	puntero_movimientos_validos resq 1
 	puntero_contadores_zorro 	resq 1
-
+	puntero_icono_zorro			resq 1
+    puntero_icono_ocas 			resq 1
 
 	registro    		times 0 resb 1
 		zorro_fila 				resd 1
@@ -32,25 +33,31 @@ section .bss
 		tope_ocas               resb 1
 		movimientos_validos 	resb 4
 		contadores_zorro 		resd 8
+		icono_zorro				resb 1
+		icono_ocas				resb 1
 
 	registro_escritura times 0  resb 1
+
 		fila_z         			resd 1
 		columna_z	 			resd 1
 		vector_o	    		resb 34
 		tope_o	                resb 1
 		movimientos_v		 	resb 4
 		contadores_z	 		resd 8
+		icono_z       			resb 1
+		icono_o 				resb 1
 
 section .text
 
 escribir_archivo:
-
 	mov [fila_z],r8d		
 	mov	[columna_z],r9d			
 	mov	[puntero_vector_ocas] ,r10    		
 	mov	[tope_o],r11b       
 	mov	[puntero_movimientos_validos] ,r12
 	mov [puntero_contadores_zorro],r13
+	mov [icono_z], r14b
+	mov [icono_o], r15b
 
 	mov rdi, path_archivo
 	mov rsi, modo_escritura
@@ -80,7 +87,7 @@ escribir_vector_ocas:
 	jmp escribir_vector_ocas
 fin:
 	mov rcx, 0
-escribir_vector_movimientos
+escribir_vector_movimientos:
 	cmp rcx, 4
 	je final
 
@@ -107,7 +114,7 @@ escribir_vector_contadores:
 escribir:
 
 	mov rdi, registro_escritura
-	mov rsi, 79
+	mov rsi, 81
 	mov rdx, 1
 	mov rcx, [id_archivo]
 	
@@ -134,6 +141,8 @@ leer_archivo:
 	mov	[puntero_tope_ocas],r11
 	mov	[puntero_movimientos_validos] ,r12
 	mov [puntero_contadores_zorro],r13
+	mov [puntero_icono_zorro], r14
+	mov [puntero_icono_ocas], r15
 
 
 
@@ -155,7 +164,7 @@ leer_archivo:
 	mov qword [id_archivo], rax
 
 	mov rdi, registro
-	mov rsi, 79
+	mov rsi, 81
 	mov rdx, 1
 	mov rcx, [id_archivo]
 
@@ -184,8 +193,17 @@ leer_archivo:
 	mov rax, [puntero_tope_ocas]
 	mov rbx, [tope_ocas]
 	mov [rax], bl
+
 	mov rcx, 0
 	call copiar_vectores
+
+	mov rax, [puntero_icono_zorro]
+	mov bl, [icono_zorro]
+	mov [rax], bl
+
+	mov rax, [puntero_icono_ocas]
+	mov bl, [icono_ocas]
+	mov [rax], bl
 	ret
 
 
