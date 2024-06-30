@@ -49,7 +49,7 @@ preguntar_indice:
     mPrintf
 
     mov rdi, formato_coordenada
-    mov rdx, auxiliar_columna
+    mov rsi, auxiliar_columna
     mScanf
 
     ; Convertir y validar indice de columna
