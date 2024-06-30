@@ -247,4 +247,5 @@ chequear_esquinas:
     ret
 fuera_de_rango:
     mov rax, 1
+    ret
     
