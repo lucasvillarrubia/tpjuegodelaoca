@@ -70,6 +70,7 @@ section .data
     captura_reciente dd 0
     cmd_clear db "clear", 0
     mensaje_error db "bueno: metiste cualquiera, o una letra que no sirve, o saliste del tablero, o no comiste nada", 10, 0
+    mensaje_error_ocaaaaaaaa db "SRGJDRTYJFRJDFJDFGJDFJKDFHFYTJFY", 10, 0
     mensaje_exito db "termino el movimiento todo joya", 10, 0
     mensaje_vivo db "te avivaste pero no funciona", 10, 0
     mensaje_captura db "devoraste", 10, 0
@@ -335,7 +336,7 @@ error_zorro:
     mov [captura_reciente], edi
     lea rdi, [rel mensaje_error]
     mPrintf
-    
+
     mov edi, [zorro_ocas_capturadas]
     mov esi, [zorro_fila]
     mov edx, [zorro_columna]
@@ -354,7 +355,7 @@ error_zorro:
 
 error_oca:
     ;limpiarConsola ;limpiarConsola
-    lea rdi, [rel mensaje_error]
+    lea rdi, [rel mensaje_error_ocaaaaaaaa]
     mPrintf
     jmp loop_oca
 
