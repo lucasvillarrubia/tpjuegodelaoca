@@ -24,6 +24,9 @@ section .data
 section .bss
     puntero_auxiliar_fila_2 resq 1
     puntero_auxiliar_columna_2 resq 1
+    fila_scanf resd 1
+    columna_scanf resd 1
+
     buffer_fila resb 10
     buffer_columna resb 10
     
@@ -39,8 +42,12 @@ preguntar_indice:
     mPrintf
 
     mov rdi, formato_coordenada
-    mov rsi, [puntero_auxiliar_fila_2] 
+    mov rsi, fila_scanf
     mScanf
+    mov eax, [fila_scanf]
+    cdqe
+    mov rbx, [puntero_auxiliar_fila_2]
+    mov [rbx], al
     
     ; lea rdi, [auxiliar_fila]
     ; call validar_entero
@@ -51,8 +58,12 @@ preguntar_indice:
     mPrintf
 
     mov rdi, formato_coordenada
-    mov rsi, [puntero_auxiliar_columna_2]
+    mov rsi, columna_scanf
     mScanf
+    mov eax, [columna_scanf]
+    cdqe
+    mov rbx, [puntero_auxiliar_columna_2]
+    mov [rbx], al
 
     ; Convertir y validar indice de columna
     ; lea rdi, [auxiliar_columna]

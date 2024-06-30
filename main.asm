@@ -191,9 +191,14 @@ loop_oca:
     mov esi, [zorro_columna]
     lea rdx, [vector_ocas] ; le paso el puntero al vector de ocas
     mov cl,  [tope_ocas]
+    mov al, [vector_ocas]
+    mov al, [vector_ocas + 1]
     sub rsp, 8
     call imprimir_tablero
     add rsp, 8
+    mov al, [vector_ocas]
+    mov al, [vector_ocas + 1]
+
 
     jmp pedir_indice
 
@@ -244,6 +249,7 @@ moverZ:
     cmp rax, 0
     jg error
     jl salir
+
     jmp movimiento_exitoso
 
 
@@ -279,15 +285,18 @@ pedir_indice:
     sub rsp, 8
     call preguntar_indice
     add rsp, 8
-
     lea rdi, [vector_ocas]
     mov sil, [tope_ocas]
     mov dl,  [auxiliar_fila]
     mov cl,  [auxiliar_columna]
+
+    sub rsp, 8
     call buscar_indice_de_oca
+    add rsp, 8
     cmp rax, -1
     je pedir_indice; 
     mov [indice_de_oca], rax
+
     
 
 pedir_movimientoO:
@@ -343,7 +352,7 @@ imprimir_captura_zorro:
     ;cmp rax, 0
     ;jg ganaste
     ;jl perdiste
-    jmp loop_oca
+    jmp loop_zorro
 
 
 imprimir_viveza:

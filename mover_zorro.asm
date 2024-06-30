@@ -112,9 +112,9 @@ es_movimiento_valido:
     je mov_arriba
     cmp byte [movimiento], 119 ;w
     je mov_arriba
-    cmp byte [movimiento], 83 ;S
+    cmp byte [movimiento], 88 ;X
     je mov_abajo
-    cmp byte [movimiento], 115 ;s
+    cmp byte [movimiento], 120 ;x
     je mov_abajo
     cmp byte [movimiento], 81 ;Q
     je mov_arriba_izquierda
@@ -128,9 +128,9 @@ es_movimiento_valido:
     je mov_abajo_izquierda
     cmp byte [movimiento], 122 ;z
     je mov_abajo_izquierda
-    cmp byte [movimiento], 88 ;X
+    cmp byte [movimiento], 67 ;C
     je mov_abajo_derecha
-    cmp byte [movimiento], 120 ;x
+    cmp byte [movimiento], 99 ;c
     je mov_abajo_derecha
     jmp error_movimiento
 
