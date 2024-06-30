@@ -18,6 +18,11 @@ section .text
 ; (vector_de_ocas: rdi, movimiento: sil, zorro_fila: dl, zorro_columna: cl,  indice_de_oca: r8, tope_ocas: r9b, movimientos_validos: r10)  
 ; post: si se pudo mover la oca entonces devuelve 1 en rax, sino devuelve -1.
 mover_oca:
+
+    mov     al, [r10]
+    mov     al, [r10 + 1]
+    mov     al, [r10+ 2]
+    mov     al, [r10+ 3]
     call    comprobar_movimiento_valido
     cmp     rax, 0 ;si no recibo una letra valida entonces no se puede mover
     jl      no_se_puede_mover_la_oca
@@ -44,17 +49,21 @@ mover_oca:
     mov     [rdi + r8], al ; REVISAR EL R8 TALVEZ SEA R8B
     mov     al, [auxiliar_columna]
     mov     [rdi + r8 + 1], al ; REVISAR EL R8 TALVEZ SEA R8B
+
+
+
+
     mov     rax, 1
     ret
 
     comprobar_movimiento_valido:
-        cmp     sil, [r10]
+        cmp     sil, byte[r10]
         je      mover_izquierda
-        cmp     sil, [r10 + 1]
+        cmp     sil, byte[r10 + 1]
         je      mover_abajo
-        cmp     sil, [r10 + 2]
+        cmp     sil, byte[r10 + 2]
         je      mover_derecha
-        cmp     sil, [r10 + 3]
+        cmp     sil, byte[r10 + 3]
         je      mover_arriba
         mov     rax, -1
         ret

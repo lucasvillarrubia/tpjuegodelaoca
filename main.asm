@@ -129,7 +129,7 @@ section .bss
     auxiliar_columna            resb 1
     vector_ocas                 times CANT_OCAS resb TAMAÑO_OCA
     tope_ocas                   resb 1
-    movimientos_validos         times 3 resb 1
+    movimientos_validos         times 4 resb 1
     indice_de_oca               resb 1
 
 
@@ -151,6 +151,7 @@ inicializar:
     sub rsp, 8
     call inicializar_juego
     add rsp, 8
+
     
     mov dword [zorro_fila], edi
     mov dword [zorro_columna], esi

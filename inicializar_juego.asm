@@ -68,13 +68,17 @@ inicializar_sin_partida_guardada:
     ;call definir_matriz ;aca llamariamos a una funcion que pregunte que tablero quiera?
     ;add rsp, 8
     ;
-
     mov     rdi, [mi_puntero_vector_ocas]
-    lea     rsi, [mi_puntero_movimientos_validos] ; uso un vector de movimientos para saber cual es el valido, talvez pueda servir mas
+    mov     rsi, [mi_puntero_movimientos_validos] ; uso un vector de movimientos para saber cual es el valido, talvez pueda servir mas
                                        ; cuando rotemos la matriz y las ocas tengan un movimiento no disponible
     mov     rdx, [mi_puntero_tope_ocas]
     mov     cl, [mi_copia_orientacion] ; LA ORIENTACION PEDIDA ESTA HARDCODEADA, ESTO ME LO DEBERIAN PASAR
     call    inicializar_ocas
+    mov     rdi, [mi_puntero_movimientos_validos]
+    mov     al, byte[rdi]
+    mov     al, byte[rdi + 1]
+    mov     al, byte[rdi+ 2]
+    mov     al, byte[rdi+ 3]
     ; mov     rdi, [mi_puntero_tope_ocas]
     ; mov     cl, [rdi]
     ; mov     cl, [mi_puntero_tope_ocas]
