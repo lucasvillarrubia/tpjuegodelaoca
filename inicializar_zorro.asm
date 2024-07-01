@@ -1,6 +1,6 @@
 %define ARRIBA 'W'
 %define IZQUIERDA 'A'
-%define ABAJO 'S'
+%define ABAJO 'X'
 %define DERECHA 'D'
 
 %define ZORRO_FIL_INICIAL_ARRIBA    5
