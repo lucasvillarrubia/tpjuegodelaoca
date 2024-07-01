@@ -55,11 +55,6 @@ pedir_coordenadas:
     mov rbx, [puntero_auxiliar_fila_2]
     mov [rbx], al
 
-    ; lea rdi, [auxiliar_fila]
-    ; call validar_entero
-    ; test rax, rax
-    ; mov [auxiliar_fila], eax
-
     lea rdi, [rel mensaje_indice_col]
     mPrintf
 
@@ -72,13 +67,6 @@ pedir_coordenadas:
     cdqe
     mov rbx, [puntero_auxiliar_columna_2]
     mov [rbx], al
-
-    ; Convertir y validar indice de columna
-    ; lea rdi, [auxiliar_columna]
-    ; call validar_entero
-    ; test rax, rax
-    ; mov [auxiliar_columna], eax
-
 ret
 
 

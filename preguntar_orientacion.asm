@@ -74,16 +74,6 @@ verificar_personalizacion:
 
 comenzar_personalizacion:
 preguntar_orientacion:
-    ;mov rdi, mensaje_pedir_orientacion
-    ;mPrintf
-
-;leer_caracter:
-    ;mov rdi, formato_caracter
-    ;mov rsi, letra
-    ;mScanf
-    ;movzx rax, byte [caracter]
-
-
     lea rdi, [rel mensaje_pedir_orientacion]
     mPrintf
     mov rdi, formato_caracter
@@ -190,8 +180,6 @@ simbolo_es_mayuscula:
 no_es_letra:
     mov rax, 1
     ret
-
-
 
 personalizacion_default:
     mov byte [simbolo_zorro], ZORRO_DEFAULT

@@ -59,40 +59,7 @@ section .bss
 section .text
 inicializar_zorro:
 inicializar:
-
-    ;mov dword [zorro_fila], ZORRO_FIL_INICIAL
-    ;mov dword [zorro_columna], ZORRO_COL_INICIAL
-
-    ;all posicionar_zorro_segun_orientacion
-    ; call imprimir_posicion
-    ; mPrintf
-    ;mov dword[r8], OCAS_CAPTURADAS_INICIALMENTE
-    ;mov cl, [zorro_comio_suficientes_ocas] ; que hacen estas lineas?
-    ;mov ch, [es_turno_del_zorro] ; que hacen estas lineas?
-
-    ;mov edi, dword [zorro_fila]
-    ;mov esi, dword [zorro_columna]
-    ;mov edx, dword [zorro_ocas_capturadas]
-    ;mov cl, byte [zorro_comio_suficientes_ocas]
-    ;mov ch, byte [es_turno_del_zorro]
-
-
-    ;ret
-
-; imprimir_posicion:
-;     mov eax, [rdi]
-;     mov [zorro_fila], eax
-;     mov eax, [rsi]
-;     mov [zorro_columna], eax
-;     mov rdi, print_posicion
-;     mov rsi, [zorro_fila]
-;     mov rdx, [zorro_columna]
-;     mov rcx, byte[r8]
-;     ret
-
     mov [orientacion_zorro], cl
-
-
 posicionar_zorro_segun_orientacion:
     cmp     cl, ABAJO
     je      ubicar_zorro_para_tablero_hacia_abajo
