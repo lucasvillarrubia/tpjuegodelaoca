@@ -351,6 +351,7 @@ pedir_movimientoO:
     mov rdi, formato_movimiento
     mov rsi, movimiento
     mScanf
+    
 descartar_sobra_input_oca:
     mGetchar
     cmp rax, 10
@@ -388,11 +389,7 @@ moverO:
     jl perdiste
 
 movimiento_exitoso_oca:
-    sub rsp, 8
-    call preguntar_guardar_partida
-    add rsp,8
-    cmp rax, 1
-    je terminar_juego
+
     jmp loop_zorro
 
 
@@ -451,9 +448,12 @@ imprimir_viveza:
 terminar_turno:
     ret
 salir:
-    ;guardar partida actual
     lea rdi, [rel mensaje_salida]
     mPrintf
+    sub rsp, 8
+    call preguntar_guardar_partida
+    add rsp,8
+
     ret
 ganaste:
     lea rdi, [rel aviso_victoria]
@@ -462,16 +462,6 @@ ganaste:
     ;ret
 perdiste:
     lea rdi, [rel aviso_derrota]
-    mPrintf
-    ret
-
-victoria_zorro:
-    mov rdi, mensaje_victoria_zorro
-    mPrintf
-    jmp terminar_juego
-
-victoria_ocas:
-    mov rdi, mensaje_victoria_ocas
     mPrintf
     jmp terminar_juego
 
@@ -523,13 +513,8 @@ preguntar_guardar_partida:
     cmp dword[guardar_partida_respuesta], 83 ; S
     je guardar_partida
     cmp dword[guardar_partida_respuesta], 78 ; N
-    je seguir_partida
     jmp preguntar_guardar_partida
 
-
-seguir_partida:
-    mov rax, -1
-    ret
 
 guardar_partida:
     mov r8 ,[zorro_fila]		
@@ -543,6 +528,4 @@ guardar_partida:
     sub rsp, 8
     call escribir_archivo
     add rsp,8
-
-    mov rax, 1
     ret

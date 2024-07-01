@@ -98,7 +98,7 @@ es_movimiento_valido:
     je mov_abajo_izquierda
     cmp byte [verificar_mov], 67 ;C
     je mov_abajo_derecha
-    jmp zorro_acorralado
+    jmp aqui_no_paso_nada_caballeros
 mov_izquierda:
     mov eax, [columna_original]
     mov [columna_verificar], eax
