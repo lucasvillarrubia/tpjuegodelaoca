@@ -16,20 +16,18 @@ global verificar_estado_juego
 
 section .data
     movimientos_posibles db 65, 87, 68, 88, 81, 69, 90, 67 ; 'A', 'W', 'D', 'X', 'Q', 'E', 'Z', 'C'
+    corte_loop          db 0
 
 
 
     
-    aver db "salió del verificar con contador: %li y movimiento: %c", 10, 0
 
-
-
-    ; ESTO NO SE USA PARA NADA PERO LO PUSE PARA QUE NO CORROMPA OTRA MEMORIA, POR AHORA MOVER_ZORRO RECIBE LOS CONTADORES EN R8
-    otros_contadores_zorro times 8 dd 0
 
 section .bss
     ocas_capturadas resd 1
-    fila_verificar resd 1
+    fila_original resd 1
+    columna_original resd 1
+    fila_verificar  resd 1
     columna_verificar resd 1
     verificar_mov resb 1
     ;ocass
@@ -40,10 +38,10 @@ section .bss
 section .text
 verificar_estado_juego:
     mov [ocas_capturadas], edi
-    mov [fila_verificar], esi
-    mov [columna_verificar], edx
+    mov [fila_original], esi
+    mov [columna_original], edx
     mov [verificador_vector_ocas], r11 ; le paso el puntero al vector de ocas
-    mov [verificador_tope_ocas], rbx
+    mov [verificador_tope_ocas], bl
 victoria_zorro:
     cmp dword [ocas_capturadas], CANT_OCAS_PARA_GANAR
     jnge derrota_zorro
@@ -63,7 +61,7 @@ derrota_zorro:
     
 
 chequear_movimientos:
-
+    mov byte[corte_loop], 0
     cmp qword [contador], 8
     jge zorro_acorralado
     mov r12, movimientos_posibles
@@ -101,30 +99,42 @@ es_movimiento_valido:
     je mov_abajo_derecha
     jmp zorro_acorralado
 mov_izquierda:
+    mov eax, [columna_original]
+    mov [columna_verificar], eax
     dec dword [columna_verificar]
     call esta_dentro_tablero
     cmp rax, 0
     jne termina_fuera_de_limites
     jmp se_podria_mover
 mov_derecha:
+    mov eax, [columna_original]
+    mov [columna_verificar], eax
     inc dword [columna_verificar]
     call esta_dentro_tablero
     cmp rax, 0
     jne termina_fuera_de_limites
     jmp se_podria_mover
 mov_arriba:
+    mov eax, [fila_original]
+    mov [fila_verificar], eax
     dec dword [fila_verificar]
     call esta_dentro_tablero
     cmp rax, 0
     jne termina_fuera_de_limites
     jmp se_podria_mover
 mov_abajo:
+    mov eax, [fila_original]
+    mov [fila_verificar], eax
     inc dword [fila_verificar]
     call esta_dentro_tablero
     cmp rax, 0
     jne termina_fuera_de_limites
     jmp se_podria_mover
 mov_arriba_izquierda:
+    mov eax, [columna_original]
+    mov [columna_verificar], eax
+    mov eax, [fila_original]
+    mov [fila_verificar], eax
     dec dword [fila_verificar]
     dec dword [columna_verificar]
     call esta_dentro_tablero
@@ -132,6 +142,10 @@ mov_arriba_izquierda:
     jne termina_fuera_de_limites
     jmp se_podria_mover
 mov_arriba_derecha:
+    mov eax, [columna_original]
+    mov [columna_verificar], eax
+    mov eax, [fila_original]
+    mov [fila_verificar], eax
     dec dword [fila_verificar]
     inc dword [columna_verificar]
     call esta_dentro_tablero
@@ -139,6 +153,10 @@ mov_arriba_derecha:
     jne termina_fuera_de_limites
     jmp se_podria_mover
 mov_abajo_izquierda:
+    mov eax, [columna_original]
+    mov [columna_verificar], eax
+    mov eax, [fila_original]
+    mov [fila_verificar], eax
     inc dword [fila_verificar]
     dec dword [columna_verificar]
     call esta_dentro_tablero
@@ -146,6 +164,10 @@ mov_abajo_izquierda:
     jne termina_fuera_de_limites
     jmp se_podria_mover
 mov_abajo_derecha:
+    mov eax, [columna_original]
+    mov [columna_verificar], eax
+    mov eax, [fila_original]
+    mov [fila_verificar], eax
     inc dword [fila_verificar]
     inc dword [columna_verificar]
     call esta_dentro_tablero
@@ -185,6 +207,9 @@ se_podria_mover:
     mov rax, 0
     ret
 podria_capturar:
+    cmp byte[corte_loop], 1
+    je termina_fuera_de_limites
+    mov byte[corte_loop], 1
     mov rax, -1
     ret
 termina_fuera_de_limites:

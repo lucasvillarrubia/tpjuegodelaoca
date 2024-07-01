@@ -71,14 +71,12 @@ section .data
     captura_reciente dd 0
     cmd_clear db "clear", 0
     mensaje_error db "bueno: metiste cualquiera, o una letra que no sirve, o saliste del tablero, o no comiste nada", 10, 0
-    mensaje_error_ocaaaaaaaa db "SRGJDRTYJFRJDFJDFGJDFJKDFHFYTJFY", 10, 0
     mensaje_exito db "termino el movimiento todo joya", 10, 0
     mensaje_vivo db "te avivaste pero no funciona", 10, 0
     mensaje_captura db "devoraste", 10, 0
     mensaje_salida db "saliste querido", 10, 0
-
-    aviso_victoria db "gano el zorro?", 10, 0
-    aviso_derrota db "ganaron las ocas $)", 10, 0                  
+    aviso_victoria db "somos campeones", 10, 0
+    aviso_derrota db "era por abajo", 10, 0           
     pregunta_continuar_partida db "Queres continuar la partida guardada? S: si. N: no:  ", 0
     estado_juego dd 0
     contadores_zorro times 8 dd 0
@@ -141,7 +139,7 @@ section .text
 main:
     mov rdi, bienvenida
     mPrintf
- lea r8,[zorro_fila]
+    lea r8,[zorro_fila]
 	lea	r9,[zorro_columna]
 	lea	r10,[vector_ocas]
 	lea	r11,[tope_ocas]              
