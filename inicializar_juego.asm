@@ -1,8 +1,4 @@
-
-
-; NO SÉ CÓMO DEVOLVER LAS POSICIONES DE LAS OCAAAAAAAAAS
-
-;contantes para oca
+;constantes para oca
 %define ARRIBA 'W'
 %define IZQUIERDA 'A'
 %define ABAJO 'S'
@@ -64,22 +60,15 @@ inicializar_sin_partida_guardada:
     ;
     mov     rdi, [mi_puntero_vector_ocas]
     mov     rsi, [mi_puntero_movimientos_validos] ; uso un vector de movimientos para saber cual es el valido, talvez pueda servir mas
-                                       ; cuando rotemos la matriz y las ocas tengan un movimiento no disponible
+                                                  ; cuando rotemos la matriz y las ocas tengan un movimiento no disponible
     mov     rdx, [mi_puntero_tope_ocas]
-    mov     cl, [mi_copia_orientacion] ; LA ORIENTACION PEDIDA ESTA HARDCODEADA, ESTO ME LO DEBERIAN PASAR
+    mov     cl, [mi_copia_orientacion] 
     call    inicializar_ocas
     mov     rdi, [mi_puntero_movimientos_validos]
     mov     al, byte[rdi]
     mov     al, byte[rdi + 1]
     mov     al, byte[rdi+ 2]
     mov     al, byte[rdi+ 3]
-    ; mov     rdi, [mi_puntero_tope_ocas]
-    ; mov     cl, [rdi]
-    ; mov     cl, [mi_puntero_tope_ocas]
-    ; mov     rdi, [mi_puntero_vector_ocas]
-
-    ; mov     cl, [rdi]
-    ; mov     cl, [rdi + 1]
 
 
     mov cl, [mi_copia_orientacion]

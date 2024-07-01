@@ -13,9 +13,6 @@
 ;   + RESULTA EN OTRA CAPTURA, ESTO SE REPITE (EN CASO DE PODER CAPTURAR EN DIRECCIONES DISTINTAS)
 ;   + ES A UN CASILLERO VACÍO, EL ZORRO NO SE MUEVE Y ES TURNO DE LAS OCAS
 ;
-
-
-
 ;
 ; Pre:
 ; RECIBE LOS SIGUIENTES PARÁMETROS EN LOS RESPECTIVOS REGISTROS:
@@ -36,9 +33,6 @@
 ; - int captura_reciente    en edx
 ;
 
-
-
-
 %macro mPrintf 0
     sub     rsp,8
     call    printf
@@ -57,8 +51,8 @@ section .data
     ;prints de pruebas
     mensaje_input_erroneo db "che, metiste cualquiera", 10, 0
     mensaje_mov_erroneo db "nono, esa letra no sirve", 10, 0
-    ;mensaje_limites db "cagaste, estas afuera", 10, 0
-    ;mensaje_sin_capturar db "te cagaste de hambre", 10, 0
+    mensaje_limites db "cagaste, estas afuera", 10, 0
+    mensaje_sin_capturar db "te cagaste de hambre", 10, 0
 
 section .bss
     movimiento resb 1
@@ -225,14 +219,14 @@ fuera_de_rango:
 
 
 termina_fuera_de_limites:
-    ;lea rdi, [rel mensaje_limites]
-    ;mPrintf
+    lea rdi, [rel mensaje_limites]
+    mPrintf
     mov edi, [captura_reciente]
     mov rax, 1
     ret
 termina_sin_capturar:
-    ;lea rdi, [rel mensaje_sin_capturar]
-    ;mPrintf
+    lea rdi, [rel mensaje_sin_capturar]
+    mPrintf
     mov edi, [captura_reciente]
     mov rax, 1
     ret
@@ -256,15 +250,7 @@ error_movimiento:
 
 
 exito:
-
-    ; argumentos para mandar a función "hay_una_oca"
-    ;mov rdi, [movimiento]
-    ;mov rsi, [fila_anterior]
-    ;mov rdx, [columna_anterior]
-    ;sub rsp, 8
-    ;call hay_una_oca
-    ;add rsp, 8
-    ; ______________________________________________
+    ;_____________________________________________
 
     ; HAY UNA OCA EN LA CASILLA A MOVER? SÍ
     ;mov rax, 0

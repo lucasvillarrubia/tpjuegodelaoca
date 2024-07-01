@@ -16,24 +16,13 @@ global main
 global imprimir_tablero
 
 section .data
-    ; comienza en la primera casilla (1,1)
-    ;pos_fila            dd 1
-    ;pos_columna         dd 1
 
     long_elemento       dd 1
     long_fila           dd 7
-    ;salto_de_linea      db 10   ; '\n'
     espacio             db 32   ; ' '
-    ;zorro               db 90   ; 'Z'
-    ;oca                 db 79   ; 'O'
     vacio               db 45   ; '-'
-    ;max_casilleros      dd MAX_CASILLEROS
     puntero_matriz      dd 0
-    ;formato_print       db "%s", 0
-
-    ;format_elemento db "%2d ", 0   ; Formato para imprimir cada elemento de la matriz
     format_newline db 10, 10, 10, 0        ; Carácter de nueva línea para imprimir al final de cada fila
-    ;format_space db "   ", 0       ; Espacio para rellenar en la parte superior e inferior de la matriz
     un_par_de_espacios db 32, 32, 32, 32, 32, 0
 
 section .bss
@@ -101,10 +90,6 @@ buscar_contenido_casillero:
     ;cmp dword [pos_fila], 4
     je rellenar_zorro
     seguir_buscando:
-    ; HAY UNA OCA AHÍ?
-    ; falta llamada a hay_una_oca
-    ; mov cl, [rdi]
-    ; mov cl, [rdi + 1]
 
     mov rdi, [mi_puntero_vector_ocas]
     mov sil, [mi_tope_ocas]
@@ -121,8 +106,6 @@ buscar_contenido_casillero:
     ; mov rax, 0
     cmp rax, 0
     jge rellenar_oca
-    ; ESTÁ DENTRO DEL TABLERO?
-    ; falta llamada a esta_dentro_rango
     call esta_dentro_tablero
     ;mov rax, 1
     cmp rax, 0

@@ -7,8 +7,8 @@ GCCFLAGS=-no-pie -z noexecstack -g
 all: juego.out
 
 
-juego.out: manejo_archivos.o preguntar_indice.o preguntar_orientacion.o capturar.o inicializar_zorro.o mover_zorro.o verificar_estado_juego.o inicializar_juego.o imprimir_tablero.o inicializar_ocas.o buscar_oca.o eliminar_oca.o mover_oca.o definir_matriz.o  main.o
-	$(GCC) manejo_archivos.o preguntar_indice.o preguntar_orientacion.o capturar.o inicializar_zorro.o mover_zorro.o verificar_estado_juego.o inicializar_juego.o imprimir_tablero.o inicializar_ocas.o buscar_oca.o eliminar_oca.o mover_oca.o definir_matriz.o  main.o -o juego.out $(GCCFLAGS)
+juego.out: manejo_archivos.o preguntar_indice.o preguntar_orientacion.o capturar.o inicializar_zorro.o mover_zorro.o verificar_estado_juego.o inicializar_juego.o imprimir_tablero.o inicializar_ocas.o buscar_oca.o eliminar_oca.o mover_oca.o main.o
+	$(GCC) manejo_archivos.o preguntar_indice.o preguntar_orientacion.o capturar.o inicializar_zorro.o mover_zorro.o verificar_estado_juego.o inicializar_juego.o imprimir_tablero.o inicializar_ocas.o buscar_oca.o eliminar_oca.o mover_oca.o  main.o -o juego.out $(GCCFLAGS)
 
 
 
@@ -21,8 +21,6 @@ buscar_oca.o: buscar_oca.asm
 capturar.o: capturar.asm
 	$(NASM) $(NASMFLAGS) -o capturar.o capturar.asm
 
-definir_matriz.o: definir_matriz.asm
-	$(NASM) $(NASMFLAGS) -o definir_matriz.o definir_matriz.asm
 
 eliminar_oca.o: eliminar_oca.asm
 	$(NASM) $(NASMFLAGS) -o eliminar_oca.o eliminar_oca.asm
