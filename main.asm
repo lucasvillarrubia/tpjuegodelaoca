@@ -229,7 +229,6 @@ loop_zorro:
 
 
 loop_oca:
-    ;limpiarConsola
     mov rdi, instruccionesO
     mPrintf
     mov rdi, turno_oca
@@ -272,7 +271,6 @@ descartar_sobra_input:
     jne descartar_sobra_input
 moverZ:
 
-    ;limpiarConsola
     mov dil, [movimiento]
     mov esi, [zorro_fila]
     mov edx, [zorro_columna]
@@ -370,6 +368,7 @@ moverO:
     jl perdiste
 
 movimiento_exitoso_oca:
+    limpiarConsola
     sub rsp, 8
     call preguntar_guardar_partida
     add rsp,8
@@ -379,7 +378,7 @@ movimiento_exitoso_oca:
 
 
 error_zorro:
-    ;limpiarConsola 
+    limpiarConsola 
     mov [captura_reciente], edi
     lea rdi, [rel mensaje_error]
     mPrintf
@@ -388,7 +387,7 @@ error_zorro:
     jmp loop_zorro
 
 error_oca:
-    ;limpiarConsola 
+    limpiarConsola 
     lea rdi, [rel mensaje_error]
     mPrintf
     jmp loop_oca
