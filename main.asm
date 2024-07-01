@@ -1,3 +1,4 @@
+
 %define ARRIBA 'W'
 %define IZQUIERDA 'A'
 %define ABAJO 'S'
@@ -48,18 +49,22 @@ extern mover_oca
 extern eliminar_oca
 extern preguntar_indice
 extern personalizacion_usuario
+
 extern escribir_archivo
+
 extern leer_archivo
 
 
 global main
 
+
 section .data
     mensaje_indice_fil db "Por favor ingrese las fila en donde esta la oca que quiere mover:", 10, 0
     mensaje_indice_col db "ahora ingrese la columna de la oca que quiere mover:", 10, 0
 
+
     zorro_ocas_capturadas dd 0   
-    zorro_comio_suficientes_ocas db 0          
+    zorro_comio_suficientes_ocas db 0          ;   ;   datos lógica zorro
     print_start db "El zorro comienza en la fila %i y en la columna %i y está ayunado", 10, 0
     print_posicion db "El zorro está en la fila %i y en la columna %i. Comió %i ocas", 10, 0
     mensaje_movimiento db "che, dame un movimiento:", 10, 0
@@ -75,10 +80,10 @@ section .data
     mensaje_vivo db "te avivaste pero no funciona", 10, 0
     mensaje_captura db "devoraste", 10, 0
     mensaje_salida db "saliste querido", 10, 0
-    aviso_victoria db "somos campeones", 10, 0
-    aviso_derrota db "era por abajo", 10, 0           
+    aviso_victoria db "Ganó el zorrooooo", 10, 0
+    aviso_derrota db "Ganaron las ocasssss", 10, 0           
     pregunta_continuar_partida db "Queres continuar la partida guardada? S: si. N: no:  ", 0
-    estado_juego dd 0
+
     contadores_zorro times 8 dd 0
     formato_numero db "%i", 10, 0
     est_derecha db "Los movimientos realizados a la derecha fueron: %i", 10, 0
@@ -92,32 +97,35 @@ section .data
 
 
     bienvenida db 10, 10, 10, "¡Bienvenidxs al Juego de la Oca!", 10, "Quien ganara?? Si el zorro come todas las ocas gana pero si queda acorralado, las ocas ganan ", 10, 0
+
     instruccionesZ db 10, "Instrucciones de como realizar un movimiento: ", 10, \
         "Con la letra (A)  -->  Te movés a la IZQUIERDA.", 10, \
         "Con la letra (D)  -->  Te movés a la DERECHA.", 10, \
         "Con la letra (W)  -->  Te movés hacia ARRIBA.", 10, \
-        "Con la letra (X)  -->  Te movés hacia ABAJO.", 10, \
+        "Con la letra (S)  -->  Te movés hacia ABAJO.", 10, \
         "Con la letra (Q)  -->  Te movés hacia ARRIBA IZQUIERDA.", 10, \
         "Con la letra (E)  -->  Te movés hacia ARRIBA DERECHA.", 10, \
         "Con la letra (Z)  -->  Te movés hacia ABAJO IZQUIERDA.", 10, \
-        "Con la letra (C)  -->  Te movés hacia ABAJO DERECHA.", 10, 0
+        "Con la letra (X)  -->  Te movés hacia ABAJO DERECHA.", 10, 0
 
     instruccionesO db 10, "Aclaraciones de las ocas : ", 10, \
         "Ingrese por pantalla la coordenada de la oca que desea mover y luego realize su movimiento", 10,10, 10, 0
 
     turno_oca db 10, "Ahora es el turno de las ocas ", 10, 0
     turno_zorro db 10, "Es el turno del zorro ", 10, 0
+       
+
 
 section .bss
-    gano_zorro                          resb 1
-    es_turno_del_zorro                  resb 1
-    orientacion                         resb 1
+    gano_zorro resb 1
+    es_turno_del_zorro resb 1
+    orientacion                 resb 1
     
-    guardar_partida_respuesta           resd 1
-    cargar_partida_respuesta            resd 1
+    guardar_partida_respuesta             resd 1
+    cargar_partida_respuesta                resd 1
 
-    icono_zorro                         resb 1
-    icono_ocas                          resb 1
+    icono_zorro resb 1
+    icono_ocas resb 1
 
 
     ;seccion zorro
@@ -139,6 +147,11 @@ section .text
 main:
     mov rdi, bienvenida
     mPrintf
+
+inicializar:
+
+
+    
     lea r8,[zorro_fila]
 	lea	r9,[zorro_columna]
 	lea	r10,[vector_ocas]
@@ -229,6 +242,7 @@ loop_zorro:
 
 
 loop_oca:
+    ;limpiarConsola
     mov rdi, instruccionesO
     mPrintf
     mov rdi, turno_oca
@@ -250,6 +264,7 @@ loop_oca:
 
 
 imprimir_posicion:
+    ; COMPLETAR PRINT DE ZORRO CON: OCAS_CAPTURADAS
     mov rdi, print_posicion
     mov rsi, [zorro_fila]
     mov rdx, [zorro_columna]
@@ -271,6 +286,7 @@ descartar_sobra_input:
     jne descartar_sobra_input
 moverZ:
 
+    ;limpiarConsola
     mov dil, [movimiento]
     mov esi, [zorro_fila]
     mov edx, [zorro_columna]
@@ -369,21 +385,33 @@ moverO:
     jl perdiste
 
 movimiento_exitoso_oca:
-    limpiarConsola
+
     jmp loop_zorro
 
 
 error_zorro:
-    limpiarConsola 
+    ;limpiarConsola ;limpiarConsola
     mov [captura_reciente], edi
     lea rdi, [rel mensaje_error]
     mPrintf
     cmp dword [captura_reciente], -1
     je imprimir_viveza
+
+    ; mov edi, [zorro_ocas_capturadas]
+    ; mov esi, [zorro_fila]
+    ; mov edx, [zorro_columna]
+    ; lea r11, [vector_ocas] ; le paso el puntero al vector de ocas
+    ; lea rbx, [tope_ocas]
+    ; sub rsp, 8
+    ; call verificar_estado_juego
+    ; add rsp, 8
+    ; cmp rax, 0
+    ; jg ganaste
+    ; jl perdiste
     jmp loop_zorro
 
 error_oca:
-    limpiarConsola 
+    ;limpiarConsola ;limpiarConsola
     lea rdi, [rel mensaje_error]
     mPrintf
     jmp loop_oca
@@ -433,7 +461,6 @@ perdiste:
     mPrintf
     jmp terminar_juego
 
-
 terminar_juego:
 imprimir_contadores:
 
@@ -482,7 +509,11 @@ preguntar_guardar_partida:
     cmp dword[guardar_partida_respuesta], 83 ; S
     je guardar_partida
     cmp dword[guardar_partida_respuesta], 78 ; N
+    je terminar_partida_sin_guardar
     jmp preguntar_guardar_partida
+
+terminar_partida_sin_guardar:
+ret
 
 
 guardar_partida:
