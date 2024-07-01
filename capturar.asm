@@ -152,9 +152,6 @@ termina_sin_capturar:
     mov rax, 1
     ret
 exito:
-    ;sub rsp, 8
-    ;call hay_una_oca
-    ;add rsp, 8
     ; HAY UNA OCA EN LA CASILLA A MOVER? SÍ    ---->    NO PUEDE CAPTURAR, FIGURA COMO MOVIMIENTO INVÁLIDO, SIGUE SIENDO TURNO DEL ZORRO
     ;mov rax, 0
    
@@ -179,16 +176,10 @@ exito:
     mov al, [rdi + 9]
     call buscar_indice_de_oca
 
-
     cmp rax, -1
     je ubicar_zorro
     jmp termina_sin_capturar
 
-
-
-    ;cmp rax, 0
-    ;je termina_sin_capturar
-    ;jmp ubicar_zorro
 ubicar_zorro:
     mov rax, 0
     mov edi, [fila]

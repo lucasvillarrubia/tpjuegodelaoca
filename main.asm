@@ -87,8 +87,6 @@ section .data
     pregunta_continuar_partida db "Queres continuar la partida guardada? S: si. N: no:  ", 0
 
     estado_juego dd 0
-    mensaje_victoria_zorro db "Ganó el zorrooooo"
-    mensaje_victoria_ocas db "Ganaron las ocasssss"               ;
 
     contadores_zorro times 8 dd 0
     formato_numero db "%i", 10, 0
@@ -108,11 +106,11 @@ section .data
         "Con la letra (A)  -->  Te movés a la IZQUIERDA.", 10, \
         "Con la letra (D)  -->  Te movés a la DERECHA.", 10, \
         "Con la letra (W)  -->  Te movés hacia ARRIBA.", 10, \
-        "Con la letra (S)  -->  Te movés hacia ABAJO.", 10, \
+        "Con la letra (X)  -->  Te movés hacia ABAJO.", 10, \
         "Con la letra (Q)  -->  Te movés hacia ARRIBA IZQUIERDA.", 10, \
         "Con la letra (E)  -->  Te movés hacia ARRIBA DERECHA.", 10, \
         "Con la letra (Z)  -->  Te movés hacia ABAJO IZQUIERDA.", 10, \
-        "Con la letra (X)  -->  Te movés hacia ABAJO DERECHA.", 10, 0
+        "Con la letra (C)  -->  Te movés hacia ABAJO DERECHA.", 10, 0
 
     instruccionesO db 10, "Aclaraciones de las ocas : ", 10, \
         "Ingrese por pantalla la coordenada de la oca que desea mover y luego realize su movimiento", 10,10, 10, 0
@@ -383,7 +381,7 @@ movimiento_exitoso_oca:
 
 
 error_zorro:
-    ;limpiarConsola ;limpiarConsola
+    ;limpiarConsola 
     mov [captura_reciente], edi
     lea rdi, [rel mensaje_error]
     mPrintf
@@ -391,7 +389,7 @@ error_zorro:
     mov edi, [zorro_ocas_capturadas]
     mov esi, [zorro_fila]
     mov edx, [zorro_columna]
-    lea r11, [vector_ocas] ; le paso el puntero al vector de ocas
+    lea r11, [vector_ocas] 
     lea rbx, [tope_ocas]
     sub rsp, 8
     call verificar_estado_juego
@@ -405,7 +403,7 @@ error_zorro:
     jmp loop_zorro
 
 error_oca:
-    ;limpiarConsola ;limpiarConsola
+    ;limpiarConsola 
     lea rdi, [rel mensaje_error_ocaaaaaaaa]
     mPrintf
     jmp loop_oca
@@ -419,7 +417,7 @@ imprimir_captura_zorro:
     mov edi, [zorro_ocas_capturadas]
     mov esi, [zorro_fila]
     mov edx, [zorro_columna]
-    lea r11, [vector_ocas] ; le paso el puntero al vector de ocas
+    lea r11, [vector_ocas] 
     lea rbx, [tope_ocas]
     sub rsp, 8
     call verificar_estado_juego
@@ -443,24 +441,34 @@ salir:
     mPrintf
     ret
 ganaste:
+    mov edi, [zorro_fila]
+    mov esi, [zorro_columna]
+    lea rdx, [vector_ocas] ; le paso el puntero al vector de ocas
+    mov cl,  [tope_ocas]
+    mov al, [icono_zorro]
+    mov bl, [icono_ocas]
+    sub rsp, 8
+    call imprimir_tablero
+    add rsp, 8
+
     lea rdi, [rel aviso_victoria]
     mPrintf
     jmp terminar_juego
     ;ret
 perdiste:
+    mov edi, [zorro_fila]
+    mov esi, [zorro_columna]
+    lea rdx, [vector_ocas] ; le paso el puntero al vector de ocas
+    mov cl,  [tope_ocas]
+    mov al, [icono_zorro]
+    mov bl, [icono_ocas]
+    sub rsp, 8
+    call imprimir_tablero
+    add rsp, 8
     lea rdi, [rel aviso_derrota]
     mPrintf
     jmp terminar_juego
 
-victoria_zorro:
-    mov rdi, mensaje_victoria_zorro
-    mPrintf
-    jmp terminar_juego
-
-victoria_ocas:
-    mov rdi, mensaje_victoria_ocas
-    mPrintf
-    jmp terminar_juego
 
 terminar_juego:
 imprimir_contadores:

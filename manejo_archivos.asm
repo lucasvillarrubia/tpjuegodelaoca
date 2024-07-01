@@ -144,13 +144,6 @@ leer_archivo:
 	mov [puntero_icono_zorro], r14
 	mov [puntero_icono_ocas], r15
 
-
-
-	; mov rax,[puntero_vector_ocas]
-	; mov bl, [rax]
-	; mov bl, [rax + 1]
-
-
 	mov rdi, path_archivo
 	mov rsi, modo_lectura
 	
@@ -177,10 +170,6 @@ leer_archivo:
 	sub rsp, 8
 	call fclose
 	add rsp, 8
-	
-	; mov bl, [vector_ocas]
-	; mov bl, [vector_ocas + 1]
-
 
 	mov rax, [puntero_zorro_fila]
 	mov rbx, [zorro_fila]
@@ -249,14 +238,9 @@ terminar_copias:
 	mov rax, 1
 	ret
 
-
-
 errorOpen:
 	ret
 
 inicializar_sin_archivo:
-	; sub rsp, 8
-	; call inicializar_sin_partida_guardada
-	; add rsp, 8
 	mov rax, -1
 	ret

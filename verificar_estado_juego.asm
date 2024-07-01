@@ -51,7 +51,6 @@ victoria_zorro:
     ret
 derrota_zorro:
 
-;falta condicional
 ;loop que verifique las coordenadas contiguas a la posición actual y verifica:
 ; - si alguna de las contiguas está dentro del tablero y no tiene una oca, NO pierde
 ;el segundo loop debería verificar las posiciones "segundas" (posibles casillas disponibles después de capturar una oca)
